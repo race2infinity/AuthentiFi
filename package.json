@@ -1,0 +1,34 @@
+{
+  "name": "authentifi",
+  "version": "1.0.0",
+  "description": "product ownership management system",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kylelobo/AuthentiFi.git"
+  },
+  "keywords": [
+    "blockchain",
+    "ethereum",
+    "xdc",
+    "solidity",
+    "truffle",
+    "ganache",
+    "nodejs",
+    "android"
+  ],
+  "author": "",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/kylelobo/AuthentiFi/issues"
+  },
+  "homepage": "https://github.com/kylelobo/AuthentiFi#readme",
+  "dependencies": {
+    "express": "^4.16.4",
+    "web3": "^0.20.6"
+  }
+}
