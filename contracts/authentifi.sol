@@ -4,9 +4,14 @@ pragma experimental ABIEncoderV2;
 
 // Data for testing the functions
 // createCode:      "11", "Nike", "Jordan", 0, "It's costly", "Pratibha Co.", "Mumbai", "11:00"
+//                  "22", "Adidas", "Air", 0, "It's costly", "Pratibha Co.", "Mumbai", "11:00"
 // createCustomer:  "111", "Kyle", "9869245690"
+//                  "222", "Calden", "0123456789"
 // createRetailer:  "1111", "Lifestyle", "Andheri", "14:00"
 //add retailer to code: "11","1111"
+//initialOwner:     "11","1111","111"
+//                  "22","1111","111"
+//changeOwner       "11","111","222"
 
 
 //Remove timestamp from createCustomer
@@ -143,19 +148,16 @@ contract Authentifi {
         }
     }
 
-
-
-    function changeOwner(string _code,string _oldCustomer, string _newCustomer)public payable returns(bool){
+     function changeOwner(string _code,string _oldCustomer, string _newCustomer)public payable returns(bool){
         uint i;
-        uint index;
         bool flag=false;
 
         //creating objects for code,oldCustomer,newCustomer
-        codeObj product=codeArr[_code];
+        codeObj memory product=codeArr[_code];
         uint len_product_customer=product.customers.length;
-        customerObj oldCustomer=customerArr[_oldCustomer];
+        customerObj memory oldCustomer=customerArr[_oldCustomer];
         uint len_oldCustomer_code=oldCustomer.code.length;
-        customerObj newCustomer=customerArr[_newCustomer];
+        customerObj memory newCustomer=customerArr[_newCustomer];
         uint len_newCustomer_code=newCustomer.code.length;
 
         //Check if oldCustomer and newCustomer have an account
@@ -167,11 +169,12 @@ contract Authentifi {
                     break;
                 }
             }
+
             if(flag==true){
                 //Swaping oldCustomer with newCustomer in product
                 for(i=0;i<len_product_customer;i++){
                     if(compareStrings(product.customers[i],_oldCustomer)){
-                        product.customers[i]=_newCustomer;
+                        codeArr[_code].customers[i]=_newCustomer;
                         break;
                     }
                 }
@@ -179,29 +182,13 @@ contract Authentifi {
                 //Removing product from oldCustomer
                 for(i=0;i<len_oldCustomer_code;i++){
                     if(compareStrings(oldCustomer.code[i],_code)){
-                        remove(i,oldCustomer.code);
+                        remove(i,customerArr[_oldCustomer].code);
                     }
                 }
 
                 //Adding product to newCustomer
-                newCustomer.code.push(_code);
+                customerArr[_newCustomer].code.push(_code);
 
-            }
-        }
-    }
-
-
-
-
-    function initialOwner(string _code,string _retailer, string _customer) public payable returns(bool){
-        codeObj product=codeArr[_code];
-        if(compareStrings(product.retailer,_retailer)){     //Check if retailer owns the prodct
-            if(customerArr[_customer].isValue){             //Check if Customer has an account
-                customerObj customer=customerArr[_customer];//Create customer object
-                uint len_code=product.customers.length;     //length of customer array in code
-                product.customers[len_code]=_customer;      //adding customer in code
-                uint len_customer=customer.code.length;     //length of code array in customer
-                customer.code[len_customer]=_code;          //adding code in customer
                 return true;
             }
         }
@@ -209,27 +196,27 @@ contract Authentifi {
     }
 
 
-
-
-        //Given a customer returns all the product codes he owwns
-    function getCodes(string _customer) public payable returns(string[]){
-        uint i;
-        uint t=0;
-        string[] memory temp=new string[](customerArr[_customer].code.length);
-        for(i=0;i<customerArr[_customer].code.length;i++){
-            temp[t]=customerArr[_customer].code[i];
-            t++;
+     function initialOwner(string _code,string _retailer, string _customer) public payable returns(bool){
+            if(compareStrings(codeArr[_code].retailer,_retailer)){     //Check if retailer owns the prodct
+                if(customerArr[_customer].isValue){             //Check if Customer has an account
+                    codeArr[_code].customers.push(_customer);      //adding customer in code
+                    customerArr[_customer].code.push(_code);
+                    return true;
+                }
+            }
+            return false;
         }
-        return temp;
+
+
+            //Given a customer returns all the product codes he owwns
+    function getCodes(string _customer) public view returns(string[]){
+        return customerArr[_customer].code;
     }
-
-
-
 
 
     // Cannot directly compare strings in Solidity
     // This function hashes the 2 strings and then compares the 2 hashes
-    function compareStrings (string a, string b) view returns (bool) {
+    function compareStrings (string a, string b) internal returns (bool) {
     	return keccak256(a) == keccak256(b);
     }
 
@@ -244,4 +231,16 @@ contract Authentifi {
         array.length--;
         return true;
     }
+
+    //function to convert string to bytes32
+    function stringToBytes32(string memory source) internal returns (bytes32 result) {
+    bytes memory tempEmptyStringTest = bytes(source);
+    if (tempEmptyStringTest.length == 0) {
+        return 0x0;
+    }
+
+    assembly {
+        result := mload(add(source, 32))
+    }
+}
 }
