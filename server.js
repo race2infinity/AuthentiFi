@@ -1,9 +1,4 @@
-// getCustomerDetails() IS RETARDED CUZ EMAIL IS ON MONGO AND NAME, PHONE IS ON MONGO + BC
-// WHY IS getNotOwnedCode() GIVING SO MANY DETAILS?
-// WHAT'S manufacturerGeneratedQRCode()?
-// I NEED SOMETHING LIKE WHEN THE SELLER/BUYER CLICK ON [X] DURING THE QR CODE SCANNING PART, I NEED TO GET SOME NOTIFICATION. THIS IS TO PREVENT ONE SAME USER FROM SENDING REQUESTS FOR BUYING + SELLING
-// I THINK THAT CALDEN SHOULD CHECK IF USER HAS THE PRODUCT IN STEP 1 OF SELL AND NOT IN LAST STEP
-// buyStep1() COMMENT IS WRONG!
+// TODO(?): CHECK IF USER HAS THE PRODUCT IN STEP 1 OF SELL AND NOT IN LAST STEP
 
 const express = require('express');
 const app = express();
@@ -22,7 +17,9 @@ const secret_id = process.env.secret;
 // Salt for hashing
 const saltRounds = 10;
 
+// IP and port
 const IP = "localhost";
+const port = process.env.PORT || 8080;
 
 // // View engine
 // app.set('views', path.join(__dirname, 'views'));
@@ -41,6 +38,7 @@ app.use(session({
     resave: true
 }));
 
+// MySQL Connection
 // var connection = mysql.createConnection({
 //     host: IP,
 //     user: process.env.database_user,
@@ -49,14 +47,16 @@ app.use(session({
 // });
 //
 // connection.connect(function(err){
-//     if(!err){
-//         console.log("connected");
-//     }else{
-//         console.log("not connected");
+//     if(!err) {
+//         console.log("Connected!");
+//     } else {
+//         console.log("Not connected.");
 //     }
 // });
 
-const web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
+const url = "http://" + IP + port.toString();
+
+const web3 = new Web3(new Web3.providers.HttpProvider(url));
 console.log("Talking with a geth server", web3.version.api);
 
 const abiArray = [
@@ -417,7 +417,7 @@ const abiArray = [
 	}
 ];
 
-const address = "0x3be0fd411aeb53d18753546907bd1728a193effe";
+const address = "";
 
 var contract = web3.eth.contract(abiArray);
 
@@ -445,8 +445,8 @@ function compareHash(email, hashedEmail) {
  * This function lists all the assets owned by the user
  * POST /myAssets
  * Send: JSON object which contains email
- * Receive: JSON array of objects which contain product brand, model, description, status, manufacturerName, manufacturerLocation, manufacturerTimestamp,
- * retailerName, retailerLocation, retailerTimestamp
+ * Receive: JSON array of objects which contain product brand, model, description, status, manufacturerName,
+ * manufacturerLocation, manufacturerTimestamp, retailerName, retailerLocation, retailerTimestamp
  */
 app.post('/myAssets', (req, res) => {
     var myAssetsArray = [];
@@ -458,9 +458,10 @@ app.post('/myAssets', (req, res) => {
         ownedCodeDetails = contractInstance.getOwnedCodeDetails(code);
         notOwnedCodeDetails = contractInstance.getNotOwnedCodeDetails(code);
         myAssetsArray.push({brand: notOwnedCodeDetails[0], model: notOwnedCodeDetails[1], description: notOwnedCodeDetails[2],
-                            status: notOwnedCodeDetails[3], manufacturerName: notOwnedCodeDetails[4], manufacturerLocation: notOwnedCodeDetails[5],
-                            manufacturerTimestamp: notOwnedCodeDetails[6], retailerName: ownedCodeDetails[0], retailerLocation: ownedCodeDetails[1],
-                            retailerTimestamp: ownedCodeDetails[2]});
+                            status: notOwnedCodeDetails[3], manufacturerName: notOwnedCodeDetails[4], 
+			    manufacturerLocation: notOwnedCodeDetails[5], manufacturerTimestamp: notOwnedCodeDetails[6], 
+			    retailerName: ownedCodeDetails[0], retailerLocation: ownedCodeDetails[1],
+			    retailerTimestamp: ownedCodeDetails[2]});
     }
     res.status(200).send(JSON.parse(JSON.stringify(myAssetsArray)));
 });
@@ -489,7 +490,8 @@ app.post('/createRetailer', (req, res) => {
     var retailerLocation = req.body.retailerLocation;
     var hashedEmailRetailer = hash(retailerEmail);
     console.log(hashedEmailRetailer);
-    let ok = contractInstance.createRetailer(retailerEmail, retailerName, retailerLocation, {from: web3.eth.accounts[0], gas:3000000});
+    let ok = contractInstance.createRetailer(retailerEmail, retailerName, retailerLocation, 
+					     {from: web3.eth.accounts[0], gas:3000000});
     if (!ok) {
         return res.status(400).send('ERROR! Could not add retailer.');
     }
@@ -537,7 +539,6 @@ app.post('/buy', (req, res) => {
     }
 });
 
-
 /**
  * This function gives product details if the scannee is not the owner of the product
  * POST /scan
@@ -568,7 +569,8 @@ app.post('/QRCodeForManufacturer', (req, res) => {
     manufacturerTimestamp = manufacturerTimestamp.toISOString().slice(0, 10);
     let salt = crypto.randomBytes(20).toString('hex');
     let code = hash(brand + model + status + description + manufacturerName + manufacturerLocation + salt);
-    let ok = contractInstance.createCode(code, brand, model, status, description, manufacturerName, manufacturerLocation, manufacturerTimestamp, {from: web3.eth.accounts[0], gas:3000000});
+    let ok = contractInstance.createCode(code, brand, model, status, description, manufacturerName, manufacturerLocation,
+					 manufacturerTimestamp, {from: web3.eth.accounts[0], gas:3000000});
     console.log(code);
     if (!ok) {
         return res.status(400).send('ERROR! QR Code for manufacturer could not be generated.');
@@ -590,8 +592,6 @@ app.get('/getCustomerDetails', (req, res) => {
 });
 
 // Server start
-const port = process.env.PORT || 8080;
-
 app.listen(port, (req, res) => {
     console.log(`Listening to port ${port}...`);
 });
@@ -602,21 +602,4 @@ app.listen(port, (req, res) => {
 //     var code = qr.image('http://www.google.com', { type: 'png' });
 //     res.setHeader('Content-type', 'image/png');  //sent qr image to client side
 //     code.pipe(res);
-// });
-
-// Returns the details of the retailer
-// app.get('/getRetailerDetails/:id', (req, res) => {
-//     retailerDetails = contractInstance.getRetailerDetails(req.params.code);
-//     if (retailerDetails[0].length === 0) {
-//         res.status(404).send('Product does not exist!');
-//         return;
-//     }
-//     res.send(contractInstance.getRetailerDetails(req.params.id));
-// });
-
-// Create new code for a product
-// app.post('/createCode', (req, res) => {
-//     res.send(contractInstance.createCode(req.params.body.code, req.params.body.brand, req.params.body.product,
-//                                         parseInt(req.params.body.status), req.params.body.description, req.params.body.manufacturer, req.params.body.location, req.params.body.timestamp,
-//                                         {from: web3.eth.accounts[0], gas:3000000}));
 // });
