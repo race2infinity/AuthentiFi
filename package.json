@@ -28,7 +28,12 @@
   },
   "homepage": "https://github.com/kylelobo/AuthentiFi#readme",
   "dependencies": {
+    "bcrypt": "^3.0.3",
+    "crypto": "^1.0.1",
     "express": "^4.16.4",
+    "express-session": "^1.15.6",
+    "mysql": "^2.16.0",
+    "qr-image": "^3.2.0",
     "web3": "^0.20.6"
   }
 }
