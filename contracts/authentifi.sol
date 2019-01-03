@@ -50,7 +50,6 @@ contract Authentifi {
     struct retailerObj {
         string name;
         string location;
-        string timestamp;
     }
 
     mapping (string => codeObj) codeArr;
@@ -119,12 +118,10 @@ contract Authentifi {
         return (customerArr[_code].name, customerArr[_code].phone);
     }
 
-    function createRetailer (string _hashedEmail, string _retailerName, string _retailerLocation, string _retailerTimestamp) public onlyOwner payable returns (uint) {
+    function createRetailer (string _hashedEmail, string _retailerName, string _retailerLocation) public onlyOwner payable returns (uint) {
         retailerObj newRetailer;
         newRetailer.name = _retailerName;
         newRetailer.location = _retailerLocation;
-        newRetailer.timestamp = _retailerTimestamp;
-        retailerArr[_hashedEmail] = newRetailer;
         owner = msg.sender;
         return 1;
     }
@@ -144,8 +141,10 @@ contract Authentifi {
                 if(compareStrings(customerArr[_customer].code[i],_code)){
                     codeArr[_code].status=2;        //changing the status to stolen.
                 }
+            return true;
             }
         }
+        return false;
     }
 
      function changeOwner(string _code,string _oldCustomer, string _newCustomer)public payable returns(bool){
