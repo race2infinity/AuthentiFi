@@ -94,7 +94,6 @@ contract Authentifi {
         return (retailerArr[codeArr[_code].retailer].name, retailerArr[codeArr[_code].retailer].location, retailerArr[codeArr[_code].retailer].timestamp);
     }
 
-
     // Function for creating a new retailer
     function addRetailerToCode(string _code, string _hashedEmailRetailer) public onlyOwner payable returns (uint) {
         codeArr[_code].retailer = _hashedEmailRetailer;
@@ -131,7 +130,7 @@ contract Authentifi {
     }
 
     // Function to report stolen
-    function reportStolen(string _code, string _customer) public payable returns(bool) {
+    function reportStolen(string _code, string _customer) public payable returns (bool) {
         uint i;
         // Checking if the customer exists
         if (customerArr[_customer].isValue) {
@@ -146,7 +145,7 @@ contract Authentifi {
         return false;
     }
 
-    function changeOwner(string _code, string _oldCustomer, string _newCustomer) public payable returns(bool) {
+    function changeOwner(string _code, string _oldCustomer, string _newCustomer) public payable returns (bool) {
         uint i;
         bool flag = false;
         // Creating objects for code,oldCustomer,newCustomer
