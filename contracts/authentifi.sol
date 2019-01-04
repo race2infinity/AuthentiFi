@@ -6,7 +6,7 @@ pragma experimental ABIEncoderV2;
 //                      "22", "Adidas", "Air", 0, "It's limited", "Prabhat Co.", "GUjarat", "12:00"
 // createCustomer:      "111", "Kyle", "9869245690"
 //                      "222", "Calden", "9123456789"
-// createRetailer:      "1111", "Lifestyle", "Andheri", "14:00"
+// createRetailer:      "1111", "Lifestyle", "Andheri"
 // addRetailerToCode:   "11", "67xasdbsdfshjd89724hjdsf"
 // initialOwner:        "11", "Lifestyle", "Kyle"
 //                      "22", "ShopersStop", "Calden"
@@ -17,16 +17,10 @@ pragma experimental ABIEncoderV2;
 
 contract Authentifi {
     address owner;
-    // string temp;
 
     // A struct which helps create a new code
     // code is a combination of - brand name, model no, status, description,
     // manufacturer details, retailer details, owner details
-
-    // function Authentifi(string _temp) public {
-    //     temp = _temp;
-    // }
-
     struct codeObj {
         uint status;
         string brand;
@@ -108,7 +102,7 @@ contract Authentifi {
         customerObj memory newCustomer;
         newCustomer.name = _name;
         newCustomer.phone = _phone;
-        newCustomer.isValue=true;
+        newCustomer.isValue = true;
         customerArr[_hashedEmail] = newCustomer;
         return true;
     }
@@ -148,7 +142,7 @@ contract Authentifi {
     function changeOwner(string _code, string _oldCustomer, string _newCustomer) public payable returns (bool) {
         uint i;
         bool flag = false;
-        // Creating objects for code,oldCustomer,newCustomer
+        // Creating objects for code, oldCustomer, newCustomer
         codeObj memory product = codeArr[_code];
         uint len_product_customer = product.customers.length;
         customerObj memory oldCustomer = customerArr[_oldCustomer];
@@ -184,14 +178,13 @@ contract Authentifi {
 
                 // Adding product to newCustomer
                 customerArr[_newCustomer].code.push(_code);
-
                 return true;
             }
         }
         return false;
     }
 
-    function initialOwner(string _code, string _retailer, string _customer) public payable returns(bool) {
+    function initialOwner(string _code, string _retailer, string _customer) public payable returns (bool) {
             if (compareStrings(codeArr[_code].retailer, _retailer)) {       // Check if retailer owns the prodct
                 if (customerArr[_customer].isValue) {                       // Check if Customer has an account
                     codeArr[_code].customers.push(_customer);               // Adding customer in code
@@ -203,7 +196,7 @@ contract Authentifi {
         }
 
     // Given a customer returns all the product codes he owwns
-    function getCodes(string _customer) public view returns(string[]) {
+    function getCodes(string _customer) public view returns (string[]) {
         return customerArr[_customer].code;
     }
 
@@ -214,7 +207,7 @@ contract Authentifi {
     }
 
     // Function to delete an element from an array
-    function remove(uint index, string[] storage array) internal returns(bool) {
+    function remove(uint index, string[] storage array) internal returns (bool) {
         if (index >= array.length)
             return false;
 
