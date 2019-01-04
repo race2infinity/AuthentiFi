@@ -549,7 +549,7 @@ app.post('/retailerSignup', (req, res) => {
     let retailerHashedPassword = hashPassword(retailerPassword);
     let retailerHashedEmail = hashEmail(retailerEmail);
     // Adding the retailer in MySQL
-    connection.query('SELECT * FROM USER WHERE Email = ? LIMIT 1', [retailerEmail], (error, results) => {
+    connection.query('SELECT * FROM RETAILER WHERE Email = ? LIMIT 1', [retailerEmail], (error, results) => {
         if (error) {
             callback(error);
             return res.status(400);
@@ -557,7 +557,7 @@ app.post('/retailerSignup', (req, res) => {
         if (results.length) {
             return res.status(400).send('Email already exists!');
         } else {
-            connection.query('INSERT INTO VALUES (?,?,?,?)', [retailerName, retailerEmail, retailerLocation, retailerHashedPassword],
+            connection.query('INSERT INTO RETAILER VALUES (?,?,?,?)', [retailerName, retailerEmail, retailerLocation, retailerHashedPassword],
                 (error, results) => {
                     if (error) {
                         callback(error);
