@@ -15,20 +15,21 @@ const bodyParser = require('body-parser');
 const crypto = require('crypto');
 const Web3 = require('web3');
 const BigNumber = require('bignumber.js');
+const fs = require('fs');
 
 // Secret ID for session
 const secret_id = process.env.secret;
 
 // Salt for hashing
-const saltRounds = 10;console.log
+const saltRounds = 0;
 
 // IP and port
 const IP = "localhost";
 const port = process.env.PORT || 8080;
 
 // // View engine
-// app.set('views', path.join(__dirname, 'views'));
-// app.set('view engine', 'ejs');
+ //app.set('views', path.join(__dirname, 'views'));
+ //app.set('view engine', 'html');
 
 // Body-parser Middleware
 app.use(bodyParser.json());
@@ -421,7 +422,7 @@ const abiArray = [
 	}
 ];
 
-const address = '0x5a62b1b9415563b3af0f8089d57182c1a3a51ed8';
+const address = '0x1b08e50d782f51e4aa560b802738d418177885f3';
 
 const contract = web3.eth.contract(abiArray);
 
@@ -438,13 +439,31 @@ function generateQRCode() {
 
 // Hash function
 function hash(email) {
-    return bcrypt.hashSync(email, saltRounds);
+    //return bcrypt.hashSync(email, saltRounds);
+    crypto.createHash('md5');
+    return crypto.createHash('md5').update(email).digest('hex');
 }
 
 // Verify hash function
 function compareHash(email, hashedEmail) {
     return bcrypt.compareSync(email, hashedEmail);
 }
+
+//Routes for Webpages
+
+
+
+app.use(express.static(__dirname+"/views"))
+app.use(express.static(__dirname+"/views/davidshimjs-qrcodejs-04f46c6"))
+
+app.get("/createCodes",function(req,res){
+    console.log("in");
+    res.sendFile("views/createCodes.html",{root:__dirname});
+});
+
+app.get("/createRetailer",function(req,res){
+    res.sendFile("views/createRetailer.html",{root:__dirname});
+});
 
 
 /**
@@ -517,7 +536,9 @@ app.post("/login", (req, res) => {
             		return res.status(400);
             	}
                 let pass = results[0].Password;
-                if (bcrypt.compareSync(password, pass))
+                //if (bcrypt.compareSync(password, pass))
+                console.log(pass,password);
+                if (hashedPassword===pass)
                     return res.status(200).send('Login successful!');
                 else
                     return res.status(400).send('Login failed.');
@@ -614,17 +635,27 @@ app.post('/myAssets', (req, res) => {
     let myAssetsArray = [];
     let email = req.body.email;
     let hashedEmail = hash(email);
-    let arrayOfCodes = [];
-    arrayOfCodes = contractInstance.getCodes(hashedEmail);
+    //let arrayOfCodes = [];
+    arrayOfCodes=contractInstance.getCodes(hashedEmail);
+    console.log(email,hashedEmail);
+    contractInstance.getCodes(hashedEmail,function(err,id){
+        console.log("my"+id);
+    });
+    console.log(contractInstance.getCodes(hashedEmail));
+    //console.log("arraryofcodes: "+arrayOfCodes);
     for (code in arrayOfCodes) {
-        let ownedCodeDetails = contractInstance.getOwnedCodeDetails(code);
-        let notOwnedCodeDetails = contractInstance.getNotOwnedCodeDetails(code);
-        myAssetsArray.push({brand: notOwnedCodeDetails[0], model: notOwnedCodeDetails[1], description: notOwnedCodeDetails[2],
-                            status: notOwnedCodeDetails[3], manufacturerName: notOwnedCodeDetails[4],
-                            manufacturerLocation: notOwnedCodeDetails[5], manufacturerTimestamp: notOwnedCodeDetails[6],
-                            retailerName: ownedCodeDetails[0], retailerLocation: ownedCodeDetails[1],
-                            retailerTimestamp: ownedCodeDetails[2]});
+        console.log(arrayOfCodes[code]);
+        let ownedCodeDetails = contractInstance.getOwnedCodeDetails(arrayOfCodes[code]);
+        let notOwnedCodeDetails = contractInstance.getNotOwnedCodeDetails(arrayOfCodes[code]);
+        console.log(notOwnedCodeDetails);
+        myAssetsArray.push({"code":arrayOfCodes[code],"brand": notOwnedCodeDetails[0], "model": notOwnedCodeDetails[1], "description": notOwnedCodeDetails[2],
+                            "status": notOwnedCodeDetails[3], "manufacturerName": notOwnedCodeDetails[4],
+                            "manufacturerLocation": notOwnedCodeDetails[5], "manufacturerTimestamp": notOwnedCodeDetails[6],
+                            "retailerName": ownedCodeDetails[0], "retailerLocation": ownedCodeDetails[1],
+                            "retailerTimestamp": ownedCodeDetails[2]});
     }
+    console.log(myAssetsArray);
+    console.log(arrayOfCodes);
     res.status(200).send(JSON.parse(JSON.stringify(myAssetsArray)));
 });
 
@@ -779,7 +810,11 @@ app.post('/scan', (req, res) => {
     console.log(req.body);
     let code = req.body.code;
     let productDetails = contractInstance.getNotOwnedCodeDetails(code);
-    res.stauts(200).send(productDetails);
+    //console.log(productDetails[0]);
+    let productDetailsObj = {'name': productDetails[0], 'model': productDetails[1],'status':productDetails[2],
+                            'description':productDetails[3],'manufacturerName':productDetails[4],
+                            'manufacturerLocation':productDetails[5],'manufacturerTimestamp':productDetails[6]};
+    res.status(200).send(JSON.stringify(productDetailsObj));
 });
 
 
@@ -806,7 +841,13 @@ app.post('/QRCodeForManufacturer', (req, res) => {
     if (!ok) {
         return res.status(400).send('ERROR! QR Code for manufacturer could not be generated.');
     }
-    res.status(200).send('QR Code for manufacturer generated! ' + code);
+    fs.writeFile('views/davidshimjs-qrcodejs-04f46c6/code.txt',code,function(err, code) {
+        if (err) console.log(err);
+      console.log("Successfully Written to File.");
+    });
+    //res.status(200).send('QR Code for manufacturer generated! ' + code);
+    res.sendFile("views/davidshimjs-qrcodejs-04f46c6/index.html",{root:__dirname});
+
 });
 
 
