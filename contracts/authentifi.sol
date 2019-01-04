@@ -90,8 +90,8 @@ contract Authentifi {
     }
 
     // Function for showing product details if the person scanning the product is the owner
-    function getOwnedCodeDetails(string _code) public view returns (string, string, string) {
-        return (retailerArr[codeArr[_code].retailer].name, retailerArr[codeArr[_code].retailer].location, retailerArr[codeArr[_code].retailer].timestamp);
+    function getOwnedCodeDetails(string _code) public view returns (string, string) {
+        return (retailerArr[codeArr[_code].retailer].name, retailerArr[codeArr[_code].retailer].location);
     }
 
     // Function for creating a new retailer
@@ -125,8 +125,8 @@ contract Authentifi {
         return 1;
     }
 
-    function getretailerDetails(string _code) public view returns (string, string, string) {
-        return (retailerArr[_code].name, retailerArr[_code].location, retailerArr[_code].timestamp);
+    function getretailerDetails(string _code) public view returns (string, string) {
+        return (retailerArr[_code].name, retailerArr[_code].location);
     }
 
     // Function to report stolen
