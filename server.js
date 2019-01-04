@@ -1,9 +1,10 @@
 // TODO:
+// Remove logs
 // (?)CHECK IF USER HAS THE PRODUCT IN STEP 1 OF SELL AND NOT IN LAST STEP
-// Reduce salt size in QRCodeForManufacturer
-// NEED TO CHANGE SCHEMA in signUp() - add name
+// Reduce salt size in QRCodeForManufacturer API
 // Separate table for retailer
 // SEND EMAIL IN /getCustomerDetails
+// return res.status().send()
 
 const express = require('express');
 const app = express();
@@ -19,7 +20,7 @@ const BigNumber = require('bignumber.js');
 const secret_id = process.env.secret;
 
 // Salt for hashing
-const saltRounds = 10;
+const saltRounds = 10;console.log
 
 // IP and port
 const IP = "localhost";
@@ -53,9 +54,9 @@ const connection = mysql.createConnection({
 
 connection.connect(function(err){
     if( !err) {
-        console.log("Connected!");
+        console.log('Connected!');
     } else {
-        console.log("Not connected.");
+        console.log('Not connected.');
     }
 });
 
@@ -468,25 +469,27 @@ app.post("/signUp", (req, res) => {
     		return res.status(400).send('Email already exists!');
     	} else {
             connection.query('INSERT INTO USER VALUES (?,?,?,?)', [name, email, hashedPassword, phone], (error, results) => {
-                if (error)
-                    throw error;
+                if (error) {
+            		callback(error);
+            		return res.status(400);
+            	}
                 res.status(200).send('Signup successful!');
+                // Adding user to the Blockchain
+                let ok = createCustomer(email, name, phone);
+                if (ok) {
+                    console.log('User successfully added to Blockchain!');
+                } else {
+                    console.log('ERROR! User could not be added to Blockchain.');
+                }
             });
     	}
     });
-    // Adding user to the Blockchain
-    let ok = createCustomer(email, name, phone);
-    if (ok) {
-        console.log('User successfully added to Blockchain!');
-    } else {
-        console.log('ERROR! User could not be added to Blockchain.');
-    }
 });
 
 // Add the user in Blockchain
 function createCustomer(email, name, phone) {
     hashedEmail = hash(email);
-    console.log("The user created is:"+hashedEmail);
+    console.log('The user created is:', hashedEmail);
     let ok = contractInstance.createCustomer(hashedEmail, name, phone, {from: web3.eth.accounts[0], gas:3000000});
     return ok;
 };
@@ -499,7 +502,7 @@ function createCustomer(email, name, phone) {
  * Receive:     200 if successful, 400 otherwise
  */
 app.post("/login", (req, res) => {
-    let email = req.body.email;
+    let email = req.body.email;console.log
     let password = req.body.password;
     let hashedPassword = hash(password);
     connection.query('SELECT * FROM USER WHERE email = ? LIMIT 1', [email], (error, results) => {
@@ -514,7 +517,7 @@ app.post("/login", (req, res) => {
             		return res.status(400);
             	}
                 let pass = results[0].Password;
-                if (bcrypt.compareSync(password,pass))
+                if (bcrypt.compareSync(password, pass))
                     return res.status(200).send('Login successful!');
                 else
                     return res.status(400).send('Login failed.');
@@ -555,16 +558,16 @@ app.post('/retailerSignup', (req, res) => {
             		return res.status(400);
             	}
                 res.status(200).send('Signup successful!');
+                // Adding retailer to Blockchain
+                let ok = createRetailer(retailerHashedEmail, retailerName, retailerLocation);
+                if (ok) {
+                    console.log('Retailer successfully added to Blockchain!');
+                } else {
+                    console.log('ERROR! Retailer could not be added to Blockchain.');
+                }
             });
     	}
     });
-    // Adding retailer to Blockchain
-    let ok = createRetailer(retailerHashedEmail, retailerName, retailerLocation);
-    if (ok) {
-        console.log('Retailer successfully added to Blockchain!');
-    } else {
-        console.log('ERROR! Retailer could not be added to Blockchain.');
-    }
 });
 
 // Add retailer to Blockchain
@@ -592,10 +595,10 @@ app.get("/retailerLogin", (req, res) => {
     	}
 
         let pass = results[0].Password;
-        if (pass === retailerHashedPassword)
+        if (bcrypt.compareSync(retailerHashedPassword, pass))
             return res.status(200).send('Retailer login successful!');
         else
-            return res.status(200).send('Retailer login failed.');
+            return res.status(400).send('Retailer login failed.');
     })
 });
 
@@ -605,7 +608,7 @@ app.get("/retailerLogin", (req, res) => {
  * Request:     POST /myAssets
  * Send:        JSON object which contains email
  * Receive:     JSON array of objects which contain brand, model, description, status, manufacturerName,manufacturerLocation,
- *                                              manufacturerTimestamp, retailerName, retailerLocation, retailerTimestamp
+ *                                                  manufacturerTimestamp, retailerName, retailerLocation, retailerTimestamp
  */
 app.post('/myAssets', (req, res) => {
     let myAssetsArray = [];
@@ -799,7 +802,7 @@ app.post('/QRCodeForManufacturer', (req, res) => {
     let code = hash(brand + model + status + description + manufacturerName + manufacturerLocation + salt);
     let ok = contractInstance.createCode(code, brand, model, status, description, manufacturerName, manufacturerLocation,
 					 manufacturerTimestamp, {from: web3.eth.accounts[0], gas:3000000});
-    console.log(code);
+    console.log('The QR Code Generate is', code);
     if (!ok) {
         return res.status(400).send('ERROR! QR Code for manufacturer could not be generated.');
     }
