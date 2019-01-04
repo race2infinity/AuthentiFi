@@ -30,9 +30,13 @@
   "dependencies": {
     "bcrypt": "^3.0.3",
     "crypto": "^1.0.1",
+    "debug": "^4.1.1",
     "express": "^4.16.4",
     "express-session": "^1.15.6",
     "mysql": "^2.16.0",
+    "passport": "^0.4.0",
+    "redis": "^2.8.0",
+    "socket.io": "^2.2.0",
     "web3": "^0.20.6"
   }
 }

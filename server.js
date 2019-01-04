@@ -8,6 +8,7 @@ const crypto = require('crypto');
 const Web3 = require('web3');
 const BigNumber = require('bignumber.js');
 const fs = require('fs');
+const io = require('socket.io')(app);
 
 // Secret ID for session
 const secret_id = process.env.secret;
@@ -557,21 +558,20 @@ app.post('/retailerSignup', (req, res) => {
         if (results.length) {
             return res.status(400).send('Email already exists!');
         } else {
-            connection.query('INSERT INTO RETAILER VALUES (?,?,?,?)', [retailerName, retailerEmail, retailerLocation, retailerHashedPassword],
-                (error, results) => {
-                    if (error) {
-                        callback(error);
-                        return res.status(400);
-                    }
-                    res.status(200).send('Signup successful!');
-                    // Adding retailer to Blockchain
-                    let ok = createRetailer(retailerHashedEmail, retailerName, retailerLocation);
-                    if (ok) {
-                        console.log('Retailer successfully added to Blockchain!');
-                    } else {
-                        console.log('ERROR! Retailer could not be added to Blockchain.');
-                    }
-                });
+            connection.query('INSERT INTO RETAILER VALUES (?,?,?,?)', [retailerName, retailerEmail, retailerLocation, retailerHashedPassword], (error, results) => {
+                if (error) {
+                    callback(error);
+                    return res.status(400);
+                }
+                res.status(200).send('Signup successful!');
+                // Adding retailer to Blockchain
+                let ok = createRetailer(retailerHashedEmail, retailerName, retailerLocation);
+                if (ok) {
+                    console.log('Retailer successfully added to Blockchain!');
+                } else {
+                    console.log('ERROR! Retailer could not be added to Blockchain.');
+                }
+            });
         }
     });
 });
