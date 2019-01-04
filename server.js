@@ -36,12 +36,13 @@ app.use(bodyParser.urlencoded({
 }));
 
 // Express session Middleware
+/*
 app.use(session({
     secret: secret_id,
     saveUninitialized: true,
     resave: true
 }));
-
+*/
 // MySQL Connection
 const connection = mysql.createConnection({
     host: IP,
@@ -419,7 +420,7 @@ const abiArray = [
 	}
 ];
 
-const address = '';
+const address = '0x5a62b1b9415563b3af0f8089d57182c1a3a51ed8';
 
 const contract = web3.eth.contract(abiArray);
 
@@ -466,7 +467,7 @@ app.post("/signUp", (req, res) => {
     	if (results.length) {
     		return res.status(400).send('Email already exists!');
     	} else {
-            connection.query('INSERT INTO VALUES (?,?,?,?)', [name, email, hashedPassword, phone], (error, results) => {
+            connection.query('INSERT INTO USER VALUES (?,?,?,?)', [name, email, hashedPassword, phone], (error, results) => {
                 if (error)
                     throw error;
                 res.status(200).send('Signup successful!');
@@ -485,6 +486,7 @@ app.post("/signUp", (req, res) => {
 // Add the user in Blockchain
 function createCustomer(email, name, phone) {
     hashedEmail = hash(email);
+    console.log("The user created is:"+hashedEmail);
     let ok = contractInstance.createCustomer(hashedEmail, name, phone, {from: web3.eth.accounts[0], gas:3000000});
     return ok;
 };
@@ -500,7 +502,6 @@ app.post("/login", (req, res) => {
     let email = req.body.email;
     let password = req.body.password;
     let hashedPassword = hash(password);
-
     connection.query('SELECT * FROM USER WHERE email = ? LIMIT 1', [email], (error, results) => {
     	if (error) {
     		callback(error);
@@ -513,10 +514,10 @@ app.post("/login", (req, res) => {
             		return res.status(400);
             	}
                 let pass = results[0].Password;
-                if (pass === hashedPassword)
+                if (bcrypt.compareSync(password,pass))
                     return res.status(200).send('Login successful!');
                 else
-                    return res.status(200).send('Login failed.');
+                    return res.status(400).send('Login failed.');
             });
     	} else {
             return res.status(400).send('Email does not exist!');
