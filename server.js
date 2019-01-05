@@ -8,7 +8,7 @@ const crypto = require('crypto');
 const Web3 = require('web3');
 const BigNumber = require('bignumber.js');
 const fs = require('fs');
-const io = require('socket.io')(app);
+//const io = require('socket.io')(app);
 
 // Secret ID for session
 const secret_id = process.env.secret;
@@ -65,6 +65,56 @@ const abiArray = [
 				"type": "string"
 			},
 			{
+				"name": "_hashedEmailRetailer",
+				"type": "string"
+			}
+		],
+		"name": "addRetailerToCode",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_code",
+				"type": "string"
+			},
+			{
+				"name": "_oldCustomer",
+				"type": "string"
+			},
+			{
+				"name": "_newCustomer",
+				"type": "string"
+			}
+		],
+		"name": "changeOwner",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_code",
+				"type": "string"
+			},
+			{
 				"name": "_brand",
 				"type": "string"
 			},
@@ -105,38 +155,6 @@ const abiArray = [
 		"type": "function"
 	},
 	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "_code",
-				"type": "string"
-			}
-		],
-		"name": "getOwnedCodeDetails",
-		"outputs": [
-			{
-				"name": "",
-				"type": "string"
-			},
-			{
-				"name": "",
-				"type": "string"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [],
-		"name": "createOwner",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"constant": false,
 		"inputs": [
 			{
@@ -164,6 +182,111 @@ const abiArray = [
 		"type": "function"
 	},
 	{
+		"constant": false,
+		"inputs": [],
+		"name": "createOwner",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_hashedEmail",
+				"type": "string"
+			},
+			{
+				"name": "_retailerName",
+				"type": "string"
+			},
+			{
+				"name": "_retailerLocation",
+				"type": "string"
+			}
+		],
+		"name": "createRetailer",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_code",
+				"type": "string"
+			},
+			{
+				"name": "_retailer",
+				"type": "string"
+			},
+			{
+				"name": "_customer",
+				"type": "string"
+			}
+		],
+		"name": "initialOwner",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "_code",
+				"type": "string"
+			},
+			{
+				"name": "_customer",
+				"type": "string"
+			}
+		],
+		"name": "reportStolen",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "_customer",
+				"type": "string"
+			}
+		],
+		"name": "getCodes",
+		"outputs": [
+			{
+				"name": "",
+				"type": "string[]"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"constant": true,
 		"inputs": [
 			{
@@ -171,7 +294,7 @@ const abiArray = [
 				"type": "string"
 			}
 		],
-		"name": "getretailerDetails",
+		"name": "getCustomerDetails",
 		"outputs": [
 			{
 				"name": "",
@@ -230,26 +353,49 @@ const abiArray = [
 		"type": "function"
 	},
 	{
-		"constant": false,
+		"constant": true,
 		"inputs": [
 			{
 				"name": "_code",
 				"type": "string"
-			},
-			{
-				"name": "_customer",
-				"type": "string"
 			}
 		],
-		"name": "reportStolen",
+		"name": "getOwnedCodeDetails",
 		"outputs": [
 			{
 				"name": "",
-				"type": "bool"
+				"type": "string"
+			},
+			{
+				"name": "",
+				"type": "string"
 			}
 		],
-		"payable": true,
-		"stateMutability": "payable",
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "_code",
+				"type": "string"
+			}
+		],
+		"name": "getretailerDetails",
+		"outputs": [
+			{
+				"name": "",
+				"type": "string"
+			},
+			{
+				"name": "",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -265,156 +411,10 @@ const abiArray = [
 		"payable": false,
 		"stateMutability": "view",
 		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_code",
-				"type": "string"
-			},
-			{
-				"name": "_hashedEmailRetailer",
-				"type": "string"
-			}
-		],
-		"name": "addRetailerToCode",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": true,
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_hashedEmail",
-				"type": "string"
-			},
-			{
-				"name": "_retailerName",
-				"type": "string"
-			},
-			{
-				"name": "_retailerLocation",
-				"type": "string"
-			}
-		],
-		"name": "createRetailer",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": true,
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_code",
-				"type": "string"
-			},
-			{
-				"name": "_retailer",
-				"type": "string"
-			},
-			{
-				"name": "_customer",
-				"type": "string"
-			}
-		],
-		"name": "initialOwner",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": true,
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "_code",
-				"type": "string"
-			}
-		],
-		"name": "getCustomerDetails",
-		"outputs": [
-			{
-				"name": "",
-				"type": "string"
-			},
-			{
-				"name": "",
-				"type": "string"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_code",
-				"type": "string"
-			},
-			{
-				"name": "_oldCustomer",
-				"type": "string"
-			},
-			{
-				"name": "_newCustomer",
-				"type": "string"
-			}
-		],
-		"name": "changeOwner",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": true,
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "_customer",
-				"type": "string"
-			}
-		],
-		"name": "getCodes",
-		"outputs": [
-			{
-				"name": "",
-				"type": "string[]"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
 	}
 ];
 
-const address = '';
+const address = '0x8f9bd0895d79a03744f8af7aff516e2ef0982e8d';
 
 const contract = web3.eth.contract(abiArray);
 
@@ -431,7 +431,7 @@ function generateQRCode() {
 
 // Hash password using bcrypt
 function hashPassword(password) {
-    return bcrypt.hashSync(email, saltRounds);
+    return bcrypt.hashSync(password, saltRounds);
 }
 
 // Hash email using md5
@@ -617,7 +617,7 @@ app.get("/retailerLogin", (req, res) => {
 app.post('/myAssets', (req, res) => {
     let myAssetsArray = [];
     let email = req.body.email;
-    let hashedEmail = hash(email);
+    let hashedEmail = hashEmail(email);
     let arrayOfCodes = contractInstance.getCodes(hashedEmail);
     for (code in arrayOfCodes) {
         console.log(arrayOfCodes[code]);
@@ -656,6 +656,7 @@ app.put('/stolen', (req, res) => {
 });
 
 
+
 /**
  * Description: Sell a product from myAssets (aka your inventory)
  * Request:     POST /sell
@@ -664,20 +665,21 @@ app.put('/stolen', (req, res) => {
  */
 app.post('/sell', (req, res) => {
     let code = req.body.code;
-    let sellerEmail = req.body.sellerEmail;
-    hashedSellerEmail = hash(sellerEmail);
+    let sellerEmail = req.body.email;
+    console.log(sellerEmail);
+    hashedSellerEmail = hashEmail(sellerEmail);
     let currentTime = Date.now();         // Date.now() gets the current time in milliseconds
     let QRCode = generateQRCode();
-    QRCodes.push({ 'QRCode': QRCode, 'currentTime': currentTime });
+    QRCodes.push({ 'QRCode': QRCode, 'currentTime': currentTime,'sellerEmail':sellerEmail,'buyerEmail':'','code':code,'confirm':'0'});
     /**
      * TODO:
      * Create session that stays alive for 30 secs
      * Use events
      */
-    res.status(200).send(JSON.parse(QRCode));
+    res.status(200).send(JSON.parse(JSON.stringify(QRCode)));
 });
 
-
+//f664958866ffd362256d8b600a862c5b914ef83d
 /**
  * Description: Buy a product
  * Request:     POST /buy
@@ -686,17 +688,20 @@ app.post('/sell', (req, res) => {
  */
 app.post('/buy', (req, res) => {
     let QRCode = req.body.QRCode;
-    let buyerEmail = req.body.buyerEmail;
+    let buyerEmail = req.body.email;
     let currentTime = Date.now();         // Date.now() gets the current time in milliseconds
     for (let i = 0; i < QRCodes.length; i++) {
         if (QRCode === QRCodes[i]['QRCode']) {
-            let timeElapsed = Math.floor((QRCodes[i]['currentTime'] - currentTime) / 1000);
-            // QR Codes are valid only for 30 secs
-            if (timeElapsed <= 30) {
-                QRCodes.splice(i, 1);
+            let timeElapsed = Math.floor((currentTime - (QRCodes[i]['currentTime'])) / 1000);
+            // QR Codes are valid only for 60 secs
+            if (timeElapsed <= 600) {
+                //QRCodes.splice(i, 1);
+                QRCodes[i]['buyerEmail']=buyerEmail;
                 return res.status(200).send('Validated!');
             }
-            return res.status(400).send('Timed out!');
+            else{
+                return res.status(400).send('Timed out!');
+            }
         }
     }
 });
@@ -711,36 +716,36 @@ app.post('/buy', (req, res) => {
  */
 app.post('/getProductDetails', (req, res) => {
     let code = req.body.code;
-    let ownedCodeDetails = contractInstance.getOwnedCodeDetails(code);
-    let notOwnedCodeDetails = contractInstance.getNotOwnedCodeDetails(code);
-    if (!ownedCodeDetails || !notOwnedCodeDetails) {
-        return res.status(400).send('Could not retrieve product details.');
+    let QRCode = req.body.QRCode;
+    let currentTime = Date.now();         // Date.now() gets the current time in milliseconds
+    for (let i = 0; i < QRCodes.length; i++) {
+        if (QRCode === QRCodes[i]['QRCode']) {
+            let timeElapsed = Math.floor((currentTime - QRCodes[i]['currentTime']) / 1000);
+            // QR Codes are valid only for 60 secs
+            if (timeElapsed <= 600) {
+
+                let ownedCodeDetails = contractInstance.getOwnedCodeDetails(code);
+                let notOwnedCodeDetails = contractInstance.getNotOwnedCodeDetails(code);
+                if (!ownedCodeDetails || !notOwnedCodeDetails) {
+                    return res.status(400).send('Could not retrieve product details.');
+                }
+                let productDetails = {
+                    'brand': notOwnedCodeDetails[0], 'model': notOwnedCodeDetails[1], 'description': notOwnedCodeDetails[2],
+                    'status': notOwnedCodeDetails[3], 'manufacturerName': notOwnedCodeDetails[4],
+                    'manufacturerLocation': notOwnedCodeDetails[5], 'manufacturerTimestamp': notOwnedCodeDetails[6],
+                    'retailerName': ownedCodeDetails[0], 'retailerLocation': ownedCodeDetails[1],
+                    'retailerTimestamp': ownedCodeDetails[2]
+                };
+                res.status(200).send(JSON.parse(JSON.stringify(productDetails)));
+            }
+            else{
+                return res.status(400).send('Timed out!');
+            }
+        }
     }
-    let productDetails = {
-        'brand': notOwnedCodeDetails[0], 'model': notOwnedCodeDetails[1], 'description': notOwnedCodeDetails[2],
-        'status': notOwnedCodeDetails[3], 'manufacturerName': notOwnedCodeDetails[4],
-        'manufacturerLocation': notOwnedCodeDetails[5], 'manufacturerTimestamp': notOwnedCodeDetails[6],
-        'retailerName': ownedCodeDetails[0], 'retailerLocation': ownedCodeDetails[1],
-        'retailerTimestamp': ownedCodeDetails[2]
-    };
-    res.status(200).send(productDetails);
+
+
 });
-
-
-/**
- * Description: Buyer confirms deal
- * Request:     POST /buyerConfirm
- * Send:        JSON object which contains buyerEmailId
- * Receive:     200 if successful, 400 otherwise
- */
-app.post('/buyerConfirm', (req, res) => {
-    let buyerEmail = req.body.buyerEmail;
-    if (!buyerEmail) {
-        return res.status(400);
-    }
-    res.status(200);
-});
-
 
 /**
  * Description: Seller confirms deal and gets registered as new owner on the Blockchain
@@ -749,25 +754,76 @@ app.post('/buyerConfirm', (req, res) => {
  * Receive:     200 if successful, 400 otherwise
  */
 app.post('/sellerConfirm', (req, res) => {
-    let confirm = req.body.confirm;
-    let code = req.body.code;
-    let sellerEmail = req.body.sellerEmail;
-    let buyerEmail = req.body.buyerEmail;
-    let sellerHashedEmail = hash(sellerEmail);
-    let buyerHashedEmail = hash(buyerEmail);
-    if (!confirm) {
-        return res.status(400);
+    let sellerEmail = req.body.email;
+    let QRCode = req.body.QRCode;
+    let currentTime = Date.now();         // Date.now() gets the current time in milliseconds
+    let sellerHashedEmail = hashEmail(sellerEmail);
+    for (let i = 0; i < QRCodes.length; i++) {
+        if (QRCode === QRCodes[i]['QRCode']) {
+            console.log("went inside sellerConfirm");
+            let timeElapsed = Math.floor((currentTime - QRCodes[i]['currentTime']) / 1000);
+            console.log(timeElapsed);
+            // QR Codes are valid only for 60 secs
+            if (timeElapsed <= 600) {
+                QRCodes[i]['confirm']='1';
+                return res.status(200).send('Ok');
+            }
+            else{
+                return res.status(400).send('Timed out!');
+            }
+        }
     }
-    let ok = changeOwner(code, sellerHashedEmail, buyerHashedEmail);
-    if (!ok) {
-        return res.status(400);
-    }
-    res.status(200);
 });
+
+/**
+ * Description: Buyer confirms deal
+ * Request:     POST /buyerConfirm
+ * Send:        JSON object which contains buyerEmailId
+ * Receive:     200 if successful, 400 otherwise
+ */
+app.post('/buyerConfirm', (req, res) => {
+    let buyerEmail = req.body.email;
+    let QRCode = req.body.QRCode;
+    let currentTime = Date.now();         // Date.now() gets the current time in milliseconds
+    console.log("IN");
+    for (let i = 0; i < QRCodes.length; i++) {
+        if (QRCode === QRCodes[i]['QRCode']) {
+            console.log("Found QR Code");
+            let timeElapsed = Math.floor((currentTime - QRCodes[i]['currentTime']) / 1000);
+            // QR Codes are valid only for 60 secs
+            console.log("Time ellapsed "+timeElapsed);
+            if (timeElapsed <= 600) {
+                if(QRCodes[i]['confirm']==='1'){
+                    //console.log(typeof QRCode[i]['sellerEmail']);
+                    console.log("Buyer has confirmed");
+                    let hashedSellerEmail=hashEmail(QRCodes[i]['sellerEmail']);
+                    let hashedBuyerEmail=hashEmail(QRCodes[i]['buyerEmail']);
+                    let code = QRCodes[i]['code'];
+                    console.log(code,hashedSellerEmail,hashedBuyerEmail);
+                    let ok = contractInstance.changeOwner(code,hashedSellerEmail, hashedBuyerEmail,{ from: web3.eth.accounts[0], gas: 3000000 });
+                    console.log(ok);
+                    //console.log(typeof QRCode[i]['sellerEmail']);
+                    if (!ok) {
+                        return res.status(400).send("Error");
+                    }
+                    else{
+                        return res.status(200).send("Ok");
+                    }
+
+                }
+                console.log("Buyer has not confirmed");
+            }
+            else{
+                return res.status(400).send('Timed out!');
+            }
+        }
+    }
+});
+
 
 // Function that creates an initial owner for a product
 function initialOwner(code, retailerHashedEmail, customerHashedEmail) {
-    let ok = contractInstance.initialOwner(code, retailerHashedEmail, customerHashedEmail);
+    let ok = contractInstance.initialOwner(code, retailerHashedEmail, customerHashedEmail,{ from: web3.eth.accounts[0], gas: 3000000 });
     return ok;
 }
 
@@ -777,7 +833,18 @@ function changeOwner(code, oldOwnerHashedEmail, newOwnerHashedEmail) {
     return ok;
 }
 
-
+app.post('/test', (req, res) => {
+    let code = req.body.code;
+    let oldOwnerHashedEmail = req.body.oldOwnerHashedEmail;
+    let newOwnerHashedEmail = req.body.newOwnerHashedEmail;
+    console.log(code, oldOwnerHashedEmail, newOwnerHashedEmail);
+    let ok = contractInstance.changeOwner(code, oldOwnerHashedEmail, newOwnerHashedEmail);
+    if(ok) {
+        res.status(200).send('Done!');
+    } else {
+        res.status(400).send('Not done! :(');
+    }
+});
 /**
  * Description: Gives product details if the scannee is not the owner of the product
  * Request:     POST /scan
