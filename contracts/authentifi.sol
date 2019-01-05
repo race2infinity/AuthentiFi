@@ -148,33 +148,32 @@ contract Authentifi {
 
     function changeOwner(string _code, string _oldCustomer, string _newCustomer) public payable returns (bool) {
         uint i;
-        //bool flag = false;
-        // Creating objects for code,oldCustomer,newCustomer
-        //codeObj memory product = codeArr[_code];
-        //uint len_product_customer = product.customers.length;
-        //customerObj memory oldCustomer = customerArr[_oldCustomer];
+        bool flag = false;
+         //Creating objects for code,oldCustomer,newCustomer
+        codeObj memory product = codeArr[_code];
+        uint len_product_customer = product.customers.length;
+        customerObj memory oldCustomer = customerArr[_oldCustomer];
         uint len_oldCustomer_code = customerArr[_oldCustomer].code.length;
-        //customerObj memory newCustomer = customerArr[_newCustomer];
-        //uint len_newCustomer_code = newCustomer.code.length;
+        customerObj memory newCustomer = customerArr[_newCustomer];
 
-        // Check if oldCustomer and newCustomer have an account
-        //if (oldCustomer.isValue && newCustomer.isValue) {
-            // Check if oldCustomer is owner
-        //    for (i = 0; i < len_oldCustomer_code; i++) {
-        //        if (compareStrings(oldCustomer.code[i], _code)) {
-        //            flag = true;
-        //            break;
-        //        }
-        //    }
+        //Check if oldCustomer and newCustomer have an account
+        if (oldCustomer.isValue && newCustomer.isValue) {
+            //Check if oldCustomer is owner
+            for (i = 0; i < len_oldCustomer_code; i++) {
+                if (compareStrings(oldCustomer.code[i], _code)) {
+                    flag = true;
+                    break;
+                }
+            }
 
-        //    if (flag == true) {
-                // Swaping oldCustomer with newCustomer in product
-        //        for (i = 0; i < len_product_customer; i++) {
-        //            if (compareStrings(product.customers[i], _oldCustomer)) {
-        //                codeArr[_code].customers[i] = _newCustomer;
-        //                break;
-        //            }
-        //        }
+            if (flag == true) {
+                //Swaping oldCustomer with newCustomer in product
+                for (i = 0; i < len_product_customer; i++) {
+                    if (compareStrings(product.customers[i], _oldCustomer)) {
+                        codeArr[_code].customers[i] = _newCustomer;
+                        break;
+                    }
+                }
 
                 // Removing product from oldCustomer
                 for (i = 0; i < len_oldCustomer_code; i++) {
@@ -195,10 +194,11 @@ contract Authentifi {
                 }
 
 
-            //}
-        //}
+            }
+        }
         return false;
     }
+
 
     function initialOwner(string _code, string _retailer, string _customer) public payable returns(bool) {
             uint i;
