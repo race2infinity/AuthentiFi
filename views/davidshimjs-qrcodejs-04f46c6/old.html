@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ko" lang="ko">
+<head>
+<title>Code Results</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
+<script type="text/javascript" src="qrcode.js"></script>
+</head>
+<body>
+<div id="qrcode" style="width:500px; height:500px; margin-top:15px;"></div>
+
+<script type="text/javascript">
+function readTextFile(file)
+{
+    var rawFile = new XMLHttpRequest();
+    rawFile.open("GET", file, false);
+    rawFile.onreadystatechange = function ()
+    {
+        if(rawFile.readyState === 4)
+        {
+            if(rawFile.status === 200 || rawFile.status == 0)
+            {
+                var allText = rawFile.responseText;
+				var qrcode = new QRCode(document.getElementById("qrcode"), {
+					text:allText,
+					width : 500,
+					height : 500
+				});
+            }
+        }
+    }
+    rawFile.send(null);
+}
+readTextFile("code.txt");
+</script>
+</body>

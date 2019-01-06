@@ -3,6 +3,8 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <link href="C:\Users\Thomas AJ\Desktop\node_try\style1.css" rel="stylesheet" type="text/css">
 
+<!------ Include the above in your HEAD tag ---------->
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -23,10 +25,10 @@
 
     <title>AuthentiFi</title>
 </head>
-<body>
+<body> 
 <nav class="navbar navbar-expand-lg navbar-light navbar-laravel">
     <div class="container">
-    <a class="navbar-brand" href="http://localhost:8080/"  style="color:#1fa667">AuthentiFi</a>
+    <a class="navbar-brand" href="#">AuthentiFi</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -34,7 +36,7 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav ml-auto">
             <li class="nav-item">
-                <a class="nav-link" href="http://localhost:8080" style="color:#1fa667">Generate QR Code</a>
+                <a class="nav-link" href="file:///C:/Users/Thomas%20AJ/Desktop/node_try/RetailerRegistration.html#">Retailer Registration</a>
             </li>
         </ul>
 
@@ -47,47 +49,48 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                     <div class="card">
-                        <div style="background-color: #1fa667;color: #ffffff"  class="card-header">Retailer Registration</div>
+                        <div style="background-color: #1fa667;color: #ffffff"  class="card-header">Generate QR Codes</div>
                         <div class="card-body">
-                            <form name="myform" onsubmit="return validform()" action="http://localhost:8080/retailerSignup" method="POST" >
+                            <form name="myform" onsubmit="return validform()" action="http://192.168.137.25:8080/QRCodeForManufacturer" method="POST" >
+                                
                                 <div class="form-group row">
-                                    <label for="name" class="col-md-4 col-form-label text-md-right">Name</label>
+                                    <label for="brand" class="col-md-4 col-form-label text-md-right">Brand Name</label>
                                     <div class="col-md-6">
-                                        <input type="text" id="name" class="form-control" name="name">
+                                        <input type="text" id="brand" class="form-control" name="brand">
                                     </div>
                                 </div>
 
                                 <div class="form-group row">
-                                    <label for="email" class="col-md-4 col-form-label text-md-right">E-Mail Address</label>
+                                    <label for="model" class="col-md-4 col-form-label text-md-right">Model</label>
                                     <div class="col-md-6">
-                                        <input type="text" id="email" class="form-control" name="email">
+                                        <input type="text" id="model" class="form-control" name="model">
                                     </div>
                                 </div>
 
                                 <div class="form-group row">
-                                    <label for="location" class="col-md-4 col-form-label text-md-right">Location</label>
+                                    <label for="description" class="col-md-4 col-form-label text-md-right">Description</label>
                                     <div class="col-md-6">
-                                        <input type="text" id="location" class="form-control" name="location">
+                                        <input type="text" id="description" class="form-control" name="description" style="height:100px">
                                     </div>
                                 </div>
 
                                 <div class="form-group row">
-                                    <label for="password" class="col-md-4 col-form-label text-md-right">Password</label>
+                                    <label for="manufacturerName" class="col-md-4 col-form-label text-md-right">Manufacturer Name</label>
                                     <div class="col-md-6">
-                                        <input type="password" id="password" class="form-control" name="password">
+                                        <input type="type" id="manufacturerName" class="form-control" name="manufacturerName">
                                     </div>
                                 </div>
 
                                 <div class="form-group row">
-                                    <label for="pass" class="col-md-4 col-form-label text-md-right">Confirm Password</label>
+                                    <label for="manufacturerLocation" class="col-md-4 col-form-label text-md-right">Manufacturer Location</label>
                                     <div class="col-md-6">
-                                        <input type="password" id="pass" class="form-control" name="pass">
+                                        <input type="type" id="manufacturerLocation" class="form-control" name="manufacturerLocation">
                                     </div>
                                 </div>
 
                                     <div class="col-md-6 offset-md-4">
                                         <button type="submit" class="btn btn-primary">
-                                        Register
+                                        Generate
                                         </button>
                                     </div>
                                 </div>

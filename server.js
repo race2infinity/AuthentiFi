@@ -47,9 +47,9 @@ const connection = mysql.createConnection({
 
 connection.connect(function(err) {
     if (!err) {
-        console.log('Connected!');
+        console.log('Connected to MySql!');
     } else {
-        console.log('Not connected.');
+        console.log('Not connected to MySql.');
     }
 });
 
@@ -414,14 +414,12 @@ const abiArray = [
 	}
 ];
 
-const address = '0x8f9bd0895d79a03744f8af7aff516e2ef0982e8d';
+const address = '0x3c3a2a034426c65d715041421bf2830e7d0e074d';
 
 const contract = web3.eth.contract(abiArray);
 
 const contractInstance = contract.at(address);
 web3.eth.defaultAccount = web3.eth.coinbase;
-
-const QRCodes = [];
 
 // This function generates a QR code
 function generateQRCode() {
@@ -454,6 +452,10 @@ app.get("/createRetailer", (req, res) => {
     res.sendFile('views/createRetailer.html', { root: __dirname });
 });
 
+app.get("/", (req, res) => {
+    res.sendFile('views/index.html', { root: __dirname });
+});
+
 
 /**
  * Description: Adds a user to the database and to the blockchain
@@ -462,6 +464,7 @@ app.get("/createRetailer", (req, res) => {
  * Receive:     200 if successful, 400 otherwise
  */
 app.post("/signUp", (req, res) => {
+    console.log("Request to /signUp with email "+email);
     let name = req.body.name;
     let email = req.body.email;
     let password = req.body.password;
@@ -483,12 +486,15 @@ app.post("/signUp", (req, res) => {
                 }
                 res.status(200).send('Signup successful!');
                 // Adding user to the Blockchain
-                let ok = createCustomer(email, name, phone);
+                hashedEmail = hashEmail(email);
+                let ok = contractInstance.createCustomer(hashedEmail, name, phone, { from: web3.eth.accounts[0], gas: 3000000 });
+                //let ok = createCustomer(email, name, phone);
                 if (ok) {
-                    console.log('User successfully added to Blockchain!');
+                    console.log('User '+hashEmail+' successfully added to Blockchain!');
                 } else {
                     console.log('ERROR! User could not be added to Blockchain.');
                 }
+                console.log("");
             });
         }
     });
@@ -497,7 +503,6 @@ app.post("/signUp", (req, res) => {
 // Add the user in Blockchain
 function createCustomer(email, name, phone) {
     hashedEmail = hashEmail(email);
-    console.log('The user created is:', hashedEmail);
     let ok = contractInstance.createCustomer(hashedEmail, name, phone, { from: web3.eth.accounts[0], gas: 3000000 });
     return ok;
 };
@@ -512,6 +517,7 @@ function createCustomer(email, name, phone) {
 app.post("/login", (req, res) => {
     let email = req.body.email;
     let password = req.body.password;
+    console.log("Request to /login with email "+email);
     connection.query('SELECT * FROM USER WHERE Email = ? LIMIT 1', [email], (error, results) => {
         if (error) {
             callback(error);
@@ -524,12 +530,18 @@ app.post("/login", (req, res) => {
                     return res.status(400);
                 }
                 let pass = results[0].Password;
-                if (bcrypt.compareSync(password, pass))
+                if (bcrypt.compareSync(password, pass)){
+                    console.log("Login successful with "+email);
                     return res.status(200).send('Login successful!');
-                else
+                }
+                else{
                     return res.status(400).send('Login failed.');
+                }
+                console.log("");
             });
         } else {
+            console.log("Email does not exist");
+            console.log("");
             return res.status(400).send('Email does not exist!');
         }
     });
@@ -549,27 +561,33 @@ app.post('/retailerSignup', (req, res) => {
     let retailerPassword = req.body.password;
     let retailerHashedPassword = hashPassword(retailerPassword);
     let retailerHashedEmail = hashEmail(retailerEmail);
+    console.log("Request to /retailerSignup with email "+retailerEmail+"and hashedEmail "+retailerHashedEmail);
     // Adding the retailer in MySQL
-    connection.query('SELECT * FROM RETAILER WHERE Email = ? LIMIT 1', [retailerEmail], (error, results) => {
+    connection.query('SELECT * FROM RETAILER WHERE retailerEmail = ? LIMIT 1', [retailerEmail], (error, results) => {
         if (error) {
-            callback(error);
-            return res.status(400);
+            //callback(error);
+            console.log(error);
+            return res.status(400).send("Some SQL Error");
         }
         if (results.length) {
             return res.status(400).send('Email already exists!');
         } else {
             connection.query('INSERT INTO RETAILER VALUES (?,?,?,?)', [retailerName, retailerEmail, retailerLocation, retailerHashedPassword], (error, results) => {
                 if (error) {
-                    callback(error);
-                    return res.status(400);
+                    //callback(error);
+                    console.log(error);
+                    return res.status(400).send("Some SQL Error");
                 }
-                res.status(200).send('Signup successful!');
+                //res.status(200).send('Signup successful!');
                 // Adding retailer to Blockchain
                 let ok = createRetailer(retailerHashedEmail, retailerName, retailerLocation);
                 if (ok) {
-                    console.log('Retailer successfully added to Blockchain!');
+                    console.log('Retailer' +retailerHashedEmail+ ' successfully added to Blockchain!');
+                    return res.status(200).send("Retailer successfully added");
+                    console.log("");
                 } else {
                     console.log('ERROR! Retailer could not be added to Blockchain.');
+                    return res.status(400).send("Adding Retailer Unsuccessful");
                 }
             });
         }
@@ -590,22 +608,53 @@ function createRetailer(retailerHashedEmail, retailerName, retailerLocation) {
  * Send:        JSON object which contains email, password
  * Receive:     200 if successful, 400 otherwise
  */
-app.get("/retailerLogin", (req, res) => {
+app.post("/retailerLogin", (req, res) => {
     let retailerEmail = req.body.email;
     let retailerPassword = req.body.password;
-    connection.query('SELECT Password FROM USER WHERE Email = (?)', [retailerEmail], (error, results) => {
+    console.log("Request to /retailerLogin with email "+retailerEmail);
+    connection.query('SELECT retailerHashedPassword FROM RETAILER WHERE retailerEmail = ?', [retailerEmail], (error, results) => {
         if (error) {
-            callback(error);
+            console.log(error);
             return res.status(400);
         }
-        let pass = results[0].Password;
-        if (bcrypt.compareSync(retailerPassword, pass))
+        let pass = results[0].retailerHashedPassword ;
+        if (bcrypt.compareSync(retailerPassword, pass)){
+            console.log(retailerEmail+" has successfully Logged in");
+            console.log("");
             return res.status(200).send('Retailer login successful!');
-        else
+        }
+        else{
+            console.log(retailerEmail+" was Unsuccessful to login");
             return res.status(400).send('Retailer login failed.');
+        }
     })
 });
 
+app.get("/retailerDetails",(req,res)=>{
+    connection.query("Select * from RETAILER",(error,results)=>{
+        if(error){
+            console.log(error);
+            return res.status(400).send("ERROR");
+        }
+        else{
+            console.log(results);
+            return res.status(400).send(JSON.parse(JSON.stringify(results)));
+        }
+    })
+});
+
+ app.post("/addRetailerToCode",(req,res)=>{
+    let code=req.body.code;
+    let retailerEmail=req.body.email;
+    let hashedEmail=hashEmail(retailerEmail);
+    console.log("Request made to addRetailerToCode by "+retailerEmail+"and hashed email "+hashEmail);
+    let ok=contractInstance.addRetailerToCode(code,hashedEmail);
+    if(!ok){
+        return res.status(400).send("Error");
+    }
+    console.log("Successfully added "+hashedEmail+" to code "+code)
+    return res.status(200).send("Success");
+});
 
 /**
  * Description: Lists all the assets owned by the user
@@ -619,11 +668,14 @@ app.post('/myAssets', (req, res) => {
     let email = req.body.email;
     let hashedEmail = hashEmail(email);
     let arrayOfCodes = contractInstance.getCodes(hashedEmail);
+    console.log("Request to /myAssets with email "+email);
+    console.log("Customer has "+arrayOfCodes);
+    console.log("");
     for (code in arrayOfCodes) {
-        console.log(arrayOfCodes[code]);
+        //console.log(arrayOfCodes[code]);
         let ownedCodeDetails = contractInstance.getOwnedCodeDetails(arrayOfCodes[code]);
         let notOwnedCodeDetails = contractInstance.getNotOwnedCodeDetails(arrayOfCodes[code]);
-        console.log(notOwnedCodeDetails);
+        //console.log(notOwnedCodeDetails);
         myAssetsArray.push({
             'code': arrayOfCodes[code], 'brand': notOwnedCodeDetails[0],
             'model': notOwnedCodeDetails[1], 'description': notOwnedCodeDetails[2],
@@ -633,7 +685,7 @@ app.post('/myAssets', (req, res) => {
             'retailerTimestamp': ownedCodeDetails[2]
         });
     }
-    console.log(myAssetsArray);
+    //console.log(myAssetsArray);
     res.status(200).send(JSON.parse(JSON.stringify(myAssetsArray)));
 });
 
@@ -648,14 +700,19 @@ app.put('/stolen', (req, res) => {
     let code = req.body.code;
     let email = req.body.email;
     let hashedEmail = hashEmail(email);
+    console.log("Request to /stolen with email "+email);
     let ok = contractInstance.reportStolen(code, hashedEmail);
     if (!ok) {
+        console.log("Product code "+code+"Unsuccessfully changed");
         return res.status(400).send('ERROR! Product status could not be changed.');
     }
+    console.log("Product code "+code+"successfully changed");
     res.status(200).send('Product status successfully changed!');
 });
 
 
+// This array keeps track of all the QR Codes in
+const QRCodes = [];
 
 /**
  * Description: Sell a product from myAssets (aka your inventory)
@@ -666,20 +723,17 @@ app.put('/stolen', (req, res) => {
 app.post('/sell', (req, res) => {
     let code = req.body.code;
     let sellerEmail = req.body.email;
-    console.log(sellerEmail);
+    console.log("Request to /sell with email "+sellerEmail);
     hashedSellerEmail = hashEmail(sellerEmail);
     let currentTime = Date.now();         // Date.now() gets the current time in milliseconds
     let QRCode = generateQRCode();
-    QRCodes.push({ 'QRCode': QRCode, 'currentTime': currentTime,'sellerEmail':sellerEmail,'buyerEmail':'','code':code,'confirm':'0'});
-    /**
-     * TODO:
-     * Create session that stays alive for 30 secs
-     * Use events
-     */
+    let QRCodeObj={ 'QRCode': QRCode, 'currentTime': currentTime,'sellerEmail':sellerEmail,'buyerEmail':'','code':code,'confirm':'0','retailer':'0'};
+    QRCodes.push(QRCodeObj);
+    console.log("Session created "+(JSON.stringify(QRCode)));
+    console.log("")
     res.status(200).send(JSON.parse(JSON.stringify(QRCode)));
 });
 
-//f664958866ffd362256d8b600a862c5b914ef83d
 /**
  * Description: Buy a product
  * Request:     POST /buy
@@ -690,20 +744,27 @@ app.post('/buy', (req, res) => {
     let QRCode = req.body.QRCode;
     let buyerEmail = req.body.email;
     let currentTime = Date.now();         // Date.now() gets the current time in milliseconds
+    console.log("Request made to /buy with email"+buyerEmail);
     for (let i = 0; i < QRCodes.length; i++) {
-        if (QRCode === QRCodes[i]['QRCode']) {
+        //console.log(QRCode, QRCodes[i]['QRCode']);
+        if (QRCode===QRCodes[i]['QRCode']) {
             let timeElapsed = Math.floor((currentTime - (QRCodes[i]['currentTime'])) / 1000);
             // QR Codes are valid only for 60 secs
             if (timeElapsed <= 600) {
                 //QRCodes.splice(i, 1);
                 QRCodes[i]['buyerEmail']=buyerEmail;
+                console.log("QRCode matches, Session updated "+(JSON.stringify(QRCode)));
+                console.log("");
                 return res.status(200).send('Validated!');
             }
             else{
+                console.log("Time out Erorr");
                 return res.status(400).send('Timed out!');
             }
         }
     }
+    console.log("Could not find QRCode");
+    return res.status(400).send("Could not find QRCode");
 });
 
 
@@ -723,7 +784,6 @@ app.post('/getProductDetails', (req, res) => {
             let timeElapsed = Math.floor((currentTime - QRCodes[i]['currentTime']) / 1000);
             // QR Codes are valid only for 60 secs
             if (timeElapsed <= 600) {
-
                 let ownedCodeDetails = contractInstance.getOwnedCodeDetails(code);
                 let notOwnedCodeDetails = contractInstance.getNotOwnedCodeDetails(code);
                 if (!ownedCodeDetails || !notOwnedCodeDetails) {
@@ -736,9 +796,11 @@ app.post('/getProductDetails', (req, res) => {
                     'retailerName': ownedCodeDetails[0], 'retailerLocation': ownedCodeDetails[1],
                     'retailerTimestamp': ownedCodeDetails[2]
                 };
+                console.log("QRCode matched");
                 res.status(200).send(JSON.parse(JSON.stringify(productDetails)));
             }
             else{
+                console.log("Time out Error");
                 return res.status(400).send('Timed out!');
             }
         }
@@ -754,25 +816,33 @@ app.post('/getProductDetails', (req, res) => {
  * Receive:     200 if successful, 400 otherwise
  */
 app.post('/sellerConfirm', (req, res) => {
+    console.log("Request made to sellerConfirm "+req.body.email);
     let sellerEmail = req.body.email;
     let QRCode = req.body.QRCode;
+    let retailer=req.body.retailer;
     let currentTime = Date.now();         // Date.now() gets the current time in milliseconds
     let sellerHashedEmail = hashEmail(sellerEmail);
     for (let i = 0; i < QRCodes.length; i++) {
         if (QRCode === QRCodes[i]['QRCode']) {
-            console.log("went inside sellerConfirm");
+            //console.log("went inside sellerConfirm");
             let timeElapsed = Math.floor((currentTime - QRCodes[i]['currentTime']) / 1000);
-            console.log(timeElapsed);
             // QR Codes are valid only for 60 secs
             if (timeElapsed <= 600) {
                 QRCodes[i]['confirm']='1';
+                if(retailer=='1')
+                    QRCodes[i]['retailer']='1';
+                console.log("Success in sellerConfirm");
+                console.log("");
                 return res.status(200).send('Ok');
             }
             else{
+                console.log("Time out Error");
                 return res.status(400).send('Timed out!');
             }
         }
     }
+    console.log("Could not find QRCodes");
+    return res.status(400).send('Could not find QRCodes');
 });
 
 /**
@@ -785,39 +855,51 @@ app.post('/buyerConfirm', (req, res) => {
     let buyerEmail = req.body.email;
     let QRCode = req.body.QRCode;
     let currentTime = Date.now();         // Date.now() gets the current time in milliseconds
-    console.log("IN");
+    console.log("Request made to /buyerConfirm with email "+buyerEmail+" and QRCode "+QRCode);
+    //console.log(QRCodes);
     for (let i = 0; i < QRCodes.length; i++) {
         if (QRCode === QRCodes[i]['QRCode']) {
-            console.log("Found QR Code");
+            //console.log("Found QR Code");
             let timeElapsed = Math.floor((currentTime - QRCodes[i]['currentTime']) / 1000);
             // QR Codes are valid only for 60 secs
-            console.log("Time ellapsed "+timeElapsed);
+            //console.log("Time ellapsed "+timeElapsed);
             if (timeElapsed <= 600) {
                 if(QRCodes[i]['confirm']==='1'){
                     //console.log(typeof QRCode[i]['sellerEmail']);
-                    console.log("Buyer has confirmed");
+                    //console.log("Buyer has confirmed");
                     let hashedSellerEmail=hashEmail(QRCodes[i]['sellerEmail']);
                     let hashedBuyerEmail=hashEmail(QRCodes[i]['buyerEmail']);
                     let code = QRCodes[i]['code'];
-                    console.log(code,hashedSellerEmail,hashedBuyerEmail);
-                    let ok = contractInstance.changeOwner(code,hashedSellerEmail, hashedBuyerEmail,{ from: web3.eth.accounts[0], gas: 3000000 });
-                    console.log(ok);
+                    //console.log(code,hashedSellerEmail,hashedBuyerEmail);
+                    if(QRCodes[i]['retailer']=='1'){
+                        console.log("Performing transaction for retailer");
+                        var ok = contractInstance.initialOwner(code,hashedSellerEmail, hashedBuyerEmail,{ from: web3.eth.accounts[0], gas: 3000000 });
+                    }
+                    else{
+                        console.log("Performing transaction for customer");
+                        let ok = contractInstance.changeOwner(code,hashedSellerEmail, hashedBuyerEmail,{ from: web3.eth.accounts[0], gas: 3000000 });
+                    }
+                    //console.log(ok);
                     //console.log(typeof QRCode[i]['sellerEmail']);
                     if (!ok) {
                         return res.status(400).send("Error");
                     }
                     else{
+                        console.log("Success in buyerConfirm, Transaction is DONE!!!");
                         return res.status(200).send("Ok");
                     }
-
+                    console.log("Error in blockchain");
                 }
                 console.log("Buyer has not confirmed");
             }
             else{
                 return res.status(400).send('Timed out!');
             }
+        return res.status(400).send("Error");
         }
     }
+    console.log("Product not found")
+    return res.status(400).send("Product not found");
 });
 
 
@@ -833,18 +915,6 @@ function changeOwner(code, oldOwnerHashedEmail, newOwnerHashedEmail) {
     return ok;
 }
 
-app.post('/test', (req, res) => {
-    let code = req.body.code;
-    let oldOwnerHashedEmail = req.body.oldOwnerHashedEmail;
-    let newOwnerHashedEmail = req.body.newOwnerHashedEmail;
-    console.log(code, oldOwnerHashedEmail, newOwnerHashedEmail);
-    let ok = contractInstance.changeOwner(code, oldOwnerHashedEmail, newOwnerHashedEmail);
-    if(ok) {
-        res.status(200).send('Done!');
-    } else {
-        res.status(400).send('Not done! :(');
-    }
-});
 /**
  * Description: Gives product details if the scannee is not the owner of the product
  * Request:     POST /scan
@@ -852,7 +922,6 @@ app.post('/test', (req, res) => {
  * Receive:     JSON object which has productDetails
  */
 app.post('/scan', (req, res) => {
-    console.log(req.body);
     let code = req.body.code;
     let productDetails = contractInstance.getNotOwnedCodeDetails(code);
     let productDetailsObj = {
@@ -860,6 +929,7 @@ app.post('/scan', (req, res) => {
         'description': productDetails[3], 'manufacturerName': productDetails[4],
         'manufacturerLocation': productDetails[5], 'manufacturerTimestamp': productDetails[6]
     };
+    console.log("Request made to /scan with code "+code);
     res.status(200).send(JSON.stringify(productDetailsObj));
 });
 
@@ -880,16 +950,19 @@ app.post('/QRCodeForManufacturer', (req, res) => {
     let manufacturerTimestamp = new Date();
     manufacturerTimestamp = manufacturerTimestamp.toISOString().slice(0, 10);
     let salt = crypto.randomBytes(20).toString('hex');
-    let code = hash(brand + model + status + description + manufacturerName + manufacturerLocation + salt);
+    let code = hashEmail(brand + model + status + description + manufacturerName + manufacturerLocation + salt);
     let ok = contractInstance.createCode(code, brand, model, status, description, manufacturerName, manufacturerLocation, manufacturerTimestamp, { from: web3.eth.accounts[0], gas: 3000000 });
-    console.log('The QR Code generated is:', code);
+    console.log("Request made to /QRCodeForManufacturer with brand "+brand);
     if (!ok) {
         return res.status(400).send('ERROR! QR Code for manufacturer could not be generated.');
     }
+    console.log('The QR Code generated is:'+code);
+    code=code+"\n"+brand+"\n"+model+"\n"+description+"\n"+manufacturerName+"\n"+manufacturerLocation;
     fs.writeFile('views/davidshimjs-qrcodejs-04f46c6/code.txt', code, (err, code) => {
         if (err)
             console.log(err);
-        console.log('Successfully written to file!');
+        console.log('Successfully written code to file!');
+        console.log("");
     });
     res.sendFile('views/davidshimjs-qrcodejs-04f46c6/index.html', { root: __dirname });
 });
@@ -905,9 +978,8 @@ app.get('/getCustomerDetails', (req, res) => {
     let email = req.body.email;
     let hashedEmail = hash(email);
     let customerDetails = contractInstance.getCustomerDetails(hashedEmail);
-    let customerDetailsObj = {
-        'name': customerDetails[0], 'phone': customerDetails[1], 'email': email
-    };
+    console.log("Request made to /getCustomerDetails with email "+email);
+    let customerDetailsObj = {'name': customerDetails[0], 'phone': customerDetails[1]};
     res.status(200).send(JSON.parse(JSON.stringify(customerDetailsObj)));
 });
 

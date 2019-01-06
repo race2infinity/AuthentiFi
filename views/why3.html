@@ -1,0 +1,123 @@
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<link href="C:\Users\Thomas AJ\Desktop\node_try\style1.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="qrcode.js"></script>
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Fonts -->
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css?family=Raleway:300,400,600" rel="stylesheet" type="text/css">
+
+
+
+    <link rel="icon" href="Favicon.png">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+
+    <title>AuthentiFi</title>
+
+    <script type="text/javascript" src="qrcode.js"></script>
+    <style>
+            h2 {
+              text-align:center;
+            }
+
+            p {
+              text-align:center;
+            }
+    </style>
+
+
+
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light navbar-laravel">
+    <div class="container">
+    <a class="navbar-brand" href="http://localhost:8080" style="color:#1fa667">AuthentiFi</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="file:///C:/Users/Thomas%20AJ/Desktop/node_try/main.html#">Home</a>
+                </li>
+            </ul>
+
+    </div> -->
+    </div>
+</nav>
+
+    <div  class="cotainer">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                    <div class="card">
+                        <div style="background-color: #1fa667;text-align:center;color: #ffffff"  class="card-header">Generated QR Code</div>
+                        <div class="card-body">
+                                <div class="container">
+                                <div class="row">
+                                    <div class="col-md-offset-2 col-md-8 col-lg-offset-3 col-lg-6">
+                                        <div class="well details">
+                                            <div class="col-sm-12">
+                                                <div class="col-xs-12 col-sm-8">
+                                                    <h2 style="text-decoration:underline;"justify-content-center>Andrew Smith</h2>
+                                                    <p justify-content-center><strong>Model: </strong>Senior Developer </p>
+                                                    <p justify-content-center><strong>Description: </strong>Semantics </p>
+                                                    <p><strong>Manufacturer Name: </strong>Data Visualization </p>
+                                                    <p><strong>Manufacturer Location: </strong>Data Visualization </p>
+                                                </div>
+                                                <div class="col-xs-12 col-sm-4 col-lg-1 text-center">
+
+                                                            <div id="qrcode" style="width:500px; height:500px; margin-top:15px;"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                   </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+<script type="text/javascript">
+function readTextFile(file)
+{
+    console.log("IN");
+    var rawFile = new XMLHttpRequest();
+    rawFile.open("GET", file, false);
+    rawFile.onreadystatechange = function ()
+    {
+        if(rawFile.readyState === 4)
+        {
+            if(rawFile.status === 200 || rawFile.status == 0)
+            {
+                var allText = rawFile.responseText;
+                var qrcode = new QRCode(document.getElementById("qrcode"), {
+                    text:allText,
+                    width : 300,
+                    height : 300
+                });
+            }
+        }
+    }
+    rawFile.send(null);
+}
+readTextFile("code.txt");
+</script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+</body>
+</html>

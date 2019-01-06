@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="main.css">
+</head>
+<body>
+<div style="text-align:center">
+    <h2>AuthentiFi</h2>
+    <h3>Generate QR Codes</h3>
+</div>
+<div class="container">
+  <form name="myForm" method="POST" action="http://192.168.43.63:8080/QRCodeForManufacturer">
+    <div class="row">
+      <div class="col-25">
+        <label>Brand Name</label>
+      </div>
+      <div class="col-75">
+        <input type="text" name="brand" placeholder="Nike">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-25">
+        <label>Model</label>
+      </div>
+      <div class="col-75">
+        <input type="text" name="model" placeholder="Jordans">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-25">
+        <label>Description</label>
+      </div>
+      <div class="col-75">
+        <textarea name="description" placeholder="Really comfy, and costly too." style="height:100px"></textarea>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-25">
+        <label>Manufacturer Name</label>
+      </div>
+      <div class="col-75">
+        <input type="text" name="manufacturerName" placeholder="Pratibha Co.">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-25">
+        <label>Manufacturer Location</label>
+      </div>
+      <div class="col-75">
+        <input type="text" name="manufacturerLocation" placeholder="Mumbai">
+      </div>
+    </div>
+    <div class="row">
+      <input type="submit" name="submit" value="Submit">
+    </div>
+  </form>
+</div>
+</body>
+</html>

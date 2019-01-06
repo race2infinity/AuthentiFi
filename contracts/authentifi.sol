@@ -4,7 +4,7 @@ pragma experimental ABIEncoderV2;
 // Data for testing the functions
 // createCode:          "11", "Nike", "Jordan", 0, "It's costly", "Pratibha Co.", "Mumbai", "11:00"
 //                      "22", "Adidas", "Air", 0, "It's limited", "Prabhat Co.", "GUjarat", "12:00"
-//                      "33", "Reebok", "Air", 0, "It's limited", "Prabhat Co.", "GUjarat", "12:00"
+//                      "33", "Reebok", "Ball", 0, "It's limited", "Prabhat Co.", "GUjarat", "12:00"
 // createCustomer:      "81bd53649936d1e82c64ed216d9d7490", "Kyle", "9869245690"
 //                      "1c29fb983dbe92474a199631dca38fc6", "Calden", "9123456789"
 // createRetailer:      "1111", "Lifestyle", "Andheri"
@@ -20,15 +20,12 @@ pragma experimental ABIEncoderV2;
 contract Authentifi {
     address owner;
     // string temp;
-
-    // A struct which helps create a new code
-    // code is a combination of - brand name, model no, status, description,
-    // manufacturer details, retailer details, owner details
-
     // function Authentifi(string _temp) public {
     //     temp = _temp;
     // }
-
+    // A struct which helps create a new code
+    // code is a combination of - brand name, model no, status, description,
+    // manufacturer details, retailer details, owner details
     struct codeObj {
         uint status;
         string brand;
@@ -57,7 +54,7 @@ contract Authentifi {
     mapping (string => codeObj) codeArr;
     mapping (string => customerObj) customerArr;
     mapping (string => retailerObj) retailerArr;
-
+    /*
     function createOwner() public {
         owner = msg.sender;
     }
@@ -70,7 +67,7 @@ contract Authentifi {
     function whoIsOwner() public view returns (address) {
         return owner;
     }
-
+*/
     // Function to create a new code for the product
     function createCode(string _code, string _brand, string _model, uint _status, string _description, string _manufactuerName, string _manufactuerLocation, string _manufactuerTimestamp) public payable returns (uint) {
         codeObj newCode;
@@ -103,10 +100,10 @@ contract Authentifi {
 
     // Function for creating a new customer
     function createCustomer(string _hashedEmail, string _name, string _phone) public payable returns (bool) {
-        // if (customerArr[_hashedEmail].isValue) {
-        //     return false;
-        // }
-        customerObj memory newCustomer;
+        if (customerArr[_hashedEmail].isValue) {
+             return false;
+         }
+        customerObj newCustomer;
         newCustomer.name = _name;
         newCustomer.phone = _phone;
         newCustomer.isValue=true;
@@ -126,9 +123,10 @@ contract Authentifi {
         return 1;
     }
 
-    function getretailerDetails(string _code) public view returns (string, string) {
+    function getRetailerDetails(string _code) public view returns (string, string) {
         return (retailerArr[_code].name, retailerArr[_code].location);
     }
+
 
     // Function to report stolen
     function reportStolen(string _code, string _customer) public payable returns (bool) {
@@ -205,6 +203,7 @@ contract Authentifi {
             if (compareStrings(codeArr[_code].retailer, _retailer)) {       // Check if retailer owns the prodct
                 if (customerArr[_customer].isValue) {                       // Check if Customer has an account
                     codeArr[_code].customers.push(_customer);               // Adding customer in code
+                    codeArr[_code].status=1;
                     uint len=customerArr[_customer].code.length;
                     if(len==0){
                         customerArr[_customer].code.push(_code);
@@ -212,7 +211,6 @@ contract Authentifi {
                     }
                     else{
                     customerArr[_customer].code[len-1]=_code;
-
                     customerArr[_customer].code.push("hack");
                     }
                     return true;
