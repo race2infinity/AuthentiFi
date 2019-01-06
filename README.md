@@ -32,55 +32,54 @@ These instructions will get you a copy of the project up and running on your loc
 ### Prerequisites
 
 What things you need to install the software and how to install them
-- Installing NodeJs
+Installing NodeJs
 ```
 $ sudo apt-get install nodejs
 ```
-- Installing [Android Studio](https://developer.android.com/studio/)
+Installing [Android Studio](https://developer.android.com/studio/)
 
 
 ### Installing
 
 A step by step series of examples that tell you how to get a development env running
 
-- Cloning the repo
+Cloning the repo
 ```
 $ git clone https://github.com/kylelobo/AuthentiFi.git
 ```
-- Installing the dependencies
+Installing the dependencies
 ```
-$ cd 
+$ cd AuthentiFi
 $ npm install
 ```
-- Running the server
+Running the server
 ```
 $ node server.js
 ```
-End with an example of getting some data out of the system or using it for a little demo
 
 ## Deployment<a name="deployment"></a>
-- Cloning the XDC repo
+Cloning the XDC repo
 ```
 $ git clone https://github.com/XinFinorg/XDC01-docker-Nnodes.git    
 ```
-- Install docker & docker-compose
+Install docker & docker-compose
 ```
 $ sudo ./install_docker.sh
 ```
-- Pull image from Docker Hub
+Pull image from Docker Hub
 ```
 $ sudo docker pull xinfinorg/quorum:v2.1.0
 ```
-- Launch the setup script
+Launch the setup script
 ```
 $ cd static-nodes 
 $ sudo ./setup.sh
 ```
-- Enter number of nodes, private IP of host machine & unique docker subnet
+Enter number of nodes, private IP of host machine & unique docker subnet
 ```
 $ sudo docker-compose -p <PROJECT_NAME_STATIC_NODE> up -d
 ```
-- Accessing console
+Accessing console
 ```
 $ sudo docker exec -it PROJECT_NAME_STATIC_NODES_node_1_1 geth attach /qdata/dd/geth.ipc
 ```
