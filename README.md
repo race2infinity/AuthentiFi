@@ -12,12 +12,11 @@ A blockchain-based Product Ownership Management System for Anti-Counterfeits in 
 + [Future Scope](#future_scope)
 + [Contributing](#contributing)
 + [Authors](#authors)
-+ [References](#references)
 
 ## About<a name="description"></a>
 + In today’s world, how do you know if you are buying a genuine product?
-+ For more than a decade now, RFID (Radio Frequency IDentification) technology has been quite effective in providing anti-counterfeits measures in the supply chain. However, the genuineness of RFID tags cannot be guaranteed in the post supply chain since these tags can be rather easily cloned in the public space.
-+ We leverage the idea of Bitcoin’s blockchain that anyone can check the proof of possession of balance. Along with this, we plan to use NFC microchips which unlike RFIDs cannot be cloned.
++ For more than a decade now, RFID (Radio Frequency IDentification) technology has been quite effective in providing anti-counterfeits measures in the supply chain.
++ We leverage the idea of Bitcoin’s blockchain that anyone can check the proof of possession of balance. Along with this, we plan to use QR codes.
 + We plan to implement a proof-of-concept system employing a blockchain-based decentralized application which gives a customer the entire history of a product (eg- brand info, owner, etc).
 
 ### Why blockchain?<a name="why_blockchain"></a>
@@ -33,47 +32,77 @@ These instructions will get you a copy of the project up and running on your loc
 ### Prerequisites
 
 What things you need to install the software and how to install them
+- Installing NodeJs
+```
+$ sudo apt-get install nodejs
+```
+- Installing [Android Studio](https://developer.android.com/studio/)
 
-```
-Give examples
-```
 
 ### Installing
 
 A step by step series of examples that tell you how to get a development env running
 
-Say what the step will be
-
+- Cloning the repo
 ```
-Give the example
+$ git clone https://github.com/kylelobo/AuthentiFi.git
 ```
-
-And repeat
-
+- Installing the dependencies
 ```
-until finished
+$ cd 
+$ npm install
 ```
-
+- Running the server
+```
+$ node server.js
+```
 End with an example of getting some data out of the system or using it for a little demo
 
 ## Deployment<a name="deployment"></a>
-
-Add additional notes about how to deploy this on a live system
+- Cloning the XDC repo
+```
+$ git clone https://github.com/XinFinorg/XDC01-docker-Nnodes.git    
+```
+- Install docker & docker-compose
+```
+$ sudo ./install_docker.sh
+```
+- Pull image from Docker Hub
+```
+$ sudo docker pull xinfinorg/quorum:v2.1.0
+```
+- Launch the setup script
+```
+$ cd static-nodes 
+$ sudo ./setup.sh
+```
+- Enter number of nodes, private IP of host machine & unique docker subnet
+```
+$ sudo docker-compose -p <PROJECT_NAME_STATIC_NODE> up -d
+```
+- Accessing console
+```
+$ sudo docker exec -it PROJECT_NAME_STATIC_NODES_node_1_1 geth attach /qdata/dd/geth.ipc
+```
 
 ## Built With<a name="built_with"></a>
 Mobile App:
 + [Android Studio](https://developer.android.com/studio/) - The UI of the Android app
 + [NodeJs](https://nodejs.org/en/) - Server Environment
-+ [MongoDB](https://www.mongodb.com/) - Database
++ [MySQL](https://dev.mysql.com/downloads/os-linux.html) - Database
 
 Blockchain:
 + [XDC Blockchain](https://www.xinfin.org/) - Blockchain Network
 + [Solidity](https://github.com/ethereum/solidity) - Smart Contracts
 + [Ganache](https://truffleframework.com/ganache) - Create private Ethereum blockchain to run tests
-+ [Truffle](https://truffleframework.com/) - Development environment, testing framework 
+
+Website:
++ HTML - Markup language for creating web pages
++ CSS - Style Sheet Language
++ JavaScript - Scripting Language for web pages
 
 ## Limitations<a name="limitations"></a>
-+ The user needs to have a NFC scanner in order to check the product information.
++ The user needs to have a QR code scanner in order to check the product information.
 + Products that have already been manufactured prior to today cannot be tracked.
 + We currently depend on the company to register with our services, without which, we cannot provide information about a brand to the user.
 
@@ -98,8 +127,3 @@ Blockchain:
 + [Pratik Nerurkar](https://github.com/PlayPratz) <br>
 
 See also the list of [contributors](https://github.com/kylelobo/AuthentiFi/contributors) who participated in this project.
-
-## References<a name="references"></a>
-This project is inspired by: <br>
-https://ieeexplore.ieee.org/document/7961146
-
