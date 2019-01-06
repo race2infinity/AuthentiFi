@@ -19,6 +19,10 @@ A blockchain-based Product Ownership Management System for Anti-Counterfeits in 
 + We leverage the idea of Bitcoin’s blockchain that anyone can check the proof of possession of balance. Along with this, we plan to use QR codes.
 + We plan to implement a proof-of-concept system employing a blockchain-based decentralized application which gives a customer the entire history of a product (eg- brand info, owner, etc).
 
+### Data Flow
+![Data Flow](https://imgur.com/VGIPtDU.png)
+
+
 ### Why blockchain?<a name="why_blockchain"></a>
 + Unlike a normal database, Blockchain has a non-destructive (immutable) way to track data changes over time. This means that data is not editable rather, whenever updates are made, a new block is added to the “block-chain”. This helps track historical data (authenticity and owner data) of a product.
 + Given the amount of data to be dealt with (large amount of products being developed), if you have to keep track of all of them, it is better to have a decentralized and distributed network of nodes so that no entity can tamper with the product data and we also obtain 100% up time.
