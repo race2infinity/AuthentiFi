@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">AuthentiFi</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="product_valid">Product Valid</string>
+    <string name="product_valid_description">This product has been traced back to its factory.</string>
+    <string name="product_stolen">Product Stolen</string>
+    <string name="product_stolen_description">This product has been reported as stolen.</string>
+    <string name="product_unregistered">Product Invalid</string>
+    <string name="product_unregistered_description">This product is not registered.</string>
+    <string name="product_manufacturer">Manufactured by %1$s on %2$s</string>
+    <string name="product_sell">Sell</string>
+    <string name="product_report_stolen">Report Stolen</string>
+    <string name="product_previous_owner">You purchased this asset from %1$s on %2$s</string>
+
+    <string name="signup">New user? <u>Sign Up</u></string>
+    <string name="retailerlogin">Retailer Login</string>
+    <string name="userlogin">User Login</string>
+
+    <string name="sell_step1">1. Seller selects the product and gets a QR code</string>
+    <string name="sell_step2">2. Buyer scans the same QR code</string>
+    <string name="sell_step3">3. Buyer scans the product to be bought</string>
+
+    <string name="assets_head">My Assets</string>
+    <string name="profile_head">My Profile</string>
+</resources>
