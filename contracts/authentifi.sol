@@ -15,7 +15,7 @@ pragma experimental ABIEncoderV2;
 
 // TODO:
 // Remove timestamp from createCustomer
-//Removed onlyOwner from Retailer
+// Removed onlyOwner from Retailer
 
 contract Authentifi {
     address owner;
@@ -23,6 +23,7 @@ contract Authentifi {
     // function Authentifi(string _temp) public {
     //     temp = _temp;
     // }
+
     // A struct which helps create a new code
     // code is a combination of - brand name, model no, status, description,
     // manufacturer details, retailer details, owner details
@@ -101,12 +102,12 @@ contract Authentifi {
     // Function for creating a new customer
     function createCustomer(string _hashedEmail, string _name, string _phone) public payable returns (bool) {
         if (customerArr[_hashedEmail].isValue) {
-             return false;
-         }
+            return false;
+        }
         customerObj newCustomer;
         newCustomer.name = _name;
         newCustomer.phone = _phone;
-        newCustomer.isValue=true;
+        newCustomer.isValue = true;
         customerArr[_hashedEmail] = newCustomer;
         return true;
     }
@@ -119,14 +120,13 @@ contract Authentifi {
         retailerObj newRetailer;
         newRetailer.name = _retailerName;
         newRetailer.location = _retailerLocation;
-        retailerArr[_hashedEmail]=newRetailer;
+        retailerArr[_hashedEmail] = newRetailer;
         return 1;
     }
 
     function getRetailerDetails(string _code) public view returns (string, string) {
         return (retailerArr[_code].name, retailerArr[_code].location);
     }
-
 
     // Function to report stolen
     function reportStolen(string _code, string _customer) public payable returns (bool) {
@@ -178,20 +178,17 @@ contract Authentifi {
                     if (compareStrings(customerArr[_oldCustomer].code[i], _code)) {
                         remove(i, customerArr[_oldCustomer].code);
                         // Adding product to newCustomer
-                        uint len=customerArr[_newCustomer].code.length;
-                        if(len==0){
+                        uint len = customerArr[_newCustomer].code.length;
+                        if(len == 0){
                             customerArr[_newCustomer].code.push(_code);
                             customerArr[_newCustomer].code.push("hack");
-                        }
-                        else{
-                            customerArr[_newCustomer].code[len-1]=_code;
+                        } else {
+                            customerArr[_newCustomer].code[len-1] = _code;
                             customerArr[_newCustomer].code.push("hack");
                         }
                         return true;
                     }
                 }
-
-
             }
         }
         return false;
@@ -203,14 +200,13 @@ contract Authentifi {
             if (compareStrings(codeArr[_code].retailer, _retailer)) {       // Check if retailer owns the prodct
                 if (customerArr[_customer].isValue) {                       // Check if Customer has an account
                     codeArr[_code].customers.push(_customer);               // Adding customer in code
-                    codeArr[_code].status=1;
-                    uint len=customerArr[_customer].code.length;
-                    if(len==0){
+                    codeArr[_code].status = 1;
+                    uint len = customerArr[_customer].code.length;
+                    if(len == 0) {
                         customerArr[_customer].code.push(_code);
                         customerArr[_customer].code.push("hack");
-                    }
-                    else{
-                    customerArr[_customer].code[len-1]=_code;
+                    } else {
+                    customerArr[_customer].code[len-1] = _code;
                     customerArr[_customer].code.push("hack");
                     }
                     return true;
