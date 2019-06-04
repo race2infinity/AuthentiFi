@@ -4,8 +4,8 @@
 
 [![Hackathon](https://img.shields.io/badge/hackathon-SPIT-orange.svg)](http://csi.spit.ac.in/hackathon/) 
 [![Status](https://img.shields.io/badge/status-active-green.svg)]() 
-[![Github Issues](http://githubbadges.herokuapp.com/kylelobo/AuthentiFi/issues.svg?style=flat-square)](https://github.com/kylelobo/AuthentiFi/issues) 
-[![Pending Pull-Requests](http://githubbadges.herokuapp.com/kylelobo/AuthentiFi/pulls.svg?style=flat-square)](https://github.com/kylelobo/AuthentiFi/pulls) 
+[![GitHub Issues](https://img.shields.io/github/issues/kylelobo/AuthentiFi.svg)](https://github.com/kylelobo/AuthentiFi/issues)
+[![GitHub Pull Requests](https://img.shields.io/github/issues-pr/kylelobo/AuthentiFi.svg)](https://github.com/kylelobo/AuthentiFi/pulls)
 [![License](https://img.shields.io/badge/license-GNU-blue.svg)](LICENSE.md)
 
 
