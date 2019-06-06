@@ -12,7 +12,7 @@
 
 ---
 
-<p align="center">A blockchain-based Product Ownership Management System for Anti-Counterfeits in the Post Supply Chain.</p>
+<p align="center">A blockchain-based Product Ownership Management System for anti-counterfeits in the Post Supply Chain.</p>
 
 # Table of Contents
 + [About](#description)
@@ -40,11 +40,9 @@
 + Using Blockchain, authenticity can be checked and ownership of a product can be transferred _decades_ from now; even if the product is discontinued.
 
 ## Getting Started <a name="getting_started"></a>
-
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
 ### Prerequisites
-
 What things you need to install the software and how to install them
 Installing NodeJs
 ```
@@ -54,7 +52,6 @@ Installing [Android Studio](https://developer.android.com/studio/)
 
 
 ### Installing
-
 A step by step series of examples that tell you how to get a development env running
 
 Cloning the repo
