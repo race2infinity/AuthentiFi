@@ -1,13 +1,12 @@
 <div align="center">
 
-![AuthentiFi](https://imgur.com/1xXwOoZ.png)
+  ![AuthentiFi](https://imgur.com/1xXwOoZ.png)
 
-[![Hackathon](https://img.shields.io/badge/hackathon-SPIT-orange.svg)](http://csi.spit.ac.in/hackathon/) 
-[![Status](https://img.shields.io/badge/status-active-green.svg)]() 
-[![GitHub Issues](https://img.shields.io/github/issues/kylelobo/AuthentiFi.svg)](https://github.com/kylelobo/AuthentiFi/issues)
-[![GitHub Pull Requests](https://img.shields.io/github/issues-pr/kylelobo/AuthentiFi.svg)](https://github.com/kylelobo/AuthentiFi/pulls)
-[![License](https://img.shields.io/badge/license-GNU-blue.svg)](LICENSE.md)
-
+  [![Hackathon](https://img.shields.io/badge/hackathon-SPIT-orange.svg)](http://csi.spit.ac.in/hackathon/) 
+  [![Status](https://img.shields.io/badge/status-active-green.svg)]() 
+  [![GitHub Issues](https://img.shields.io/github/issues/kylelobo/AuthentiFi.svg)](https://github.com/kylelobo/AuthentiFi/issues)
+  [![GitHub Pull Requests](https://img.shields.io/github/issues-pr/kylelobo/AuthentiFi.svg)](https://github.com/kylelobo/AuthentiFi/pulls)
+  [![License](https://img.shields.io/badge/license-GNU-blue.svg)](LICENSE.md)
 
 </div>
 
@@ -23,7 +22,7 @@
 + [Future Scope](#future_scope)
 + [Contributing](#contributing)
 + [Authors](#authors)
-+ [References](#references)
++ [Acknowledgements](#acknowledgements)
 
 ## About<a name="description"></a>
 + In today’s world, how do you know if you are buying a genuine product?
@@ -33,9 +32,6 @@
 
 ### Data Flow
 ![Data Flow](https://imgur.com/VGIPtDU.png)
-
-### Use Case 
-![Use Case](https://imgur.com/bkXvsEH.png)
 
 ### Why blockchain?<a name="why_blockchain"></a>
 + Unlike a normal database, Blockchain has a non-destructive (immutable) way to track data changes over time. This means that data is not editable rather, whenever updates are made, a new block is added to the “block-chain”. This helps track historical data (authenticity and owner data) of a product.
@@ -75,7 +71,7 @@ Running the server
 $ node server.js
 ```
 
-## Deployment<a name="deployment"></a>
+## Deployment <a name="deployment"></a>
 **1. Instantiate your data directory**
 ```
 geth --datadir ./myDataDir init ./myGenesis.json
@@ -142,7 +138,7 @@ This is the geth JavaScript console. Any command with the symbol > should be typ
 > miner.stop()
 ```
 
-## Built With<a name="built_with"></a>
+## Built With <a name="built_with"></a>
 Mobile App:
 + [Android Studio](https://developer.android.com/studio/) - Android app
 + [NodeJs](https://nodejs.org/en/) - Server Environment
@@ -159,12 +155,12 @@ Website:
 + JavaScript - Scripting Language for web pages
 + Bootstrap - Templating
 
-## Limitations<a name="limitations"></a>
+## Limitations <a name="limitations"></a>
 + The user needs to have a QR code scanner in order to check the product information.
 + Products that have already been manufactured prior to today cannot be tracked.
 + We currently depend on the company to register with our services, without which, we cannot provide information about a brand to the user.
 
-## Future Scope<a name="future_scope"></a>
+## Future Scope <a name="future_scope"></a>
 + To track every genuine product that is to be sold.
 + Implement this idea in other fields.
 + Virtual transactions
@@ -173,16 +169,14 @@ Website:
 + QR codes which have secure graphic
 + Implement our own tokens which can be sold to users so that they can purchase ownership of a product using tokens which helps in insurance processing. 
 
-## Contributing<a name="contributing"></a>
-
+## Contributing <a name="contributing"></a>
 1. Fork it (<https://github.com/kylelobo/AuthentiFi/fork>)
 2. Create your feature branch (`git checkout -b feature/fooBar`)
 3. Commit your changes (`git commit -am 'Add some fooBar'`)
 4. Push to the branch (`git push origin feature/fooBar`)
 5. Create a new Pull Request
 
-## Authors<a name="authors"></a>
-
+## Authors <a name="authors"></a>
 + [Calden Rodrigues](https://github.com/caldenrodrigues) <br>
 + [JohnAnand Abraham](https://github.com/johnanand) <br>
 + [Kyle Lobo](https://github.com/kylelobo) <br>
@@ -190,5 +184,5 @@ Website:
 
 See also the list of [contributors](https://github.com/kylelobo/AuthentiFi/contributors) who participated in this project.
 
-## References<a name="references"></a>
-https://medium.com/mercuryprotocol/how-to-create-your-own-private-ethereum-blockchain-dad6af82fc9f
+## Acknowledgements <a name="acknowledgements"></a>
+[How To: Create Your Own Private Ethereum Blockchain](https://medium.com/mercuryprotocol/how-to-create-your-own-private-ethereum-blockchain-dad6af82fc9f) - _Mercury Protocol_
