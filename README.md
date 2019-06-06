@@ -14,7 +14,7 @@
 
 <p align="center">A blockchain-based Product Ownership Management System for Anti-Counterfeits in the Post Supply Chain.</p>
 
-# Table of Content
+# Table of Contents
 + [About](#description)
 + [Getting Started](#getting_started)
 + [Deployment](#deployment)
