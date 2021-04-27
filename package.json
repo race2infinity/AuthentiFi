@@ -35,7 +35,7 @@
     "express-session": "^1.15.6",
     "mysql": "^2.16.0",
     "passport": "^0.4.0",
-    "redis": "^2.8.0",
+    "redis": "^3.1.1",
     "socket.io": "^2.2.0",
     "web3": "^0.20.6"
   }
